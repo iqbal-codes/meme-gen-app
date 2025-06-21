@@ -10,7 +10,6 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderRadius: RADIUS.md,
     aspectRatio: 1, // Make it square
-    ...createShadow({ size: 'sm' }),
   },
   
   // Variants
@@ -27,7 +26,6 @@ export default StyleSheet.create({
   },
   ghostButton: {
     backgroundColor: 'transparent',
-    ...createShadow({ size: 'none' }),
   },
   dangerButton: {
     backgroundColor: COLORS.destructive,

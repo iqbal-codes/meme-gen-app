@@ -3,13 +3,11 @@ import {
   View,
   Text,
   TouchableOpacity,
-  ScrollView,
-  Modal,
-  Pressable,
   StyleProp,
   TextStyle as RNTextStyle,
 } from 'react-native';
 import Button from '../Button';
+import BaseBottomSheet from '../BaseBottomSheet';
 import styles from './styles';
 
 export interface TextStyle {
@@ -61,16 +59,14 @@ const TextStyleBottomSheet: React.FC<TextStyleBottomSheetProps> = ({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.container}>
-        <Pressable style={styles.overlay} onPress={onClose} />
-        <View style={styles.bottomSheet}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Text Style</Text>
-            <Button title="Done" variant="primary" size="small" onPress={onClose} />
-          </View>
-
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+    <BaseBottomSheet
+      visible={visible}
+      onClose={onClose}
+      title="Text Style"
+      headerAction={<Button title="Done" variant="primary" size="small" onPress={onClose} />}
+      maxHeight="60%"
+      minHeight="40%"
+    >
             {/* Color Section */}
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Color</Text>
@@ -170,10 +166,7 @@ const TextStyleBottomSheet: React.FC<TextStyleBottomSheetProps> = ({
                 </TouchableOpacity>
               </View>
             </View>
-          </ScrollView>
-        </View>
-      </View>
-    </Modal>
+    </BaseBottomSheet>
   );
 };
 

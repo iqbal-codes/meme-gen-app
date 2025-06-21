@@ -11,23 +11,25 @@ import { CanvasElement } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SCREEN_WIDTH, SPACING } from './constants/theme';
 import Button from './components/Button';
-import { TextStyleBottomSheet } from './components';
+import { TextStyleBottomSheet, ImageSelectionBottomSheet } from './components';
 import { TextStyle } from './components/TextStyleBottomSheet';
 import useImageHeight from './hooks/useImageHeight';
 // We will create this component in the next step
 
 const App = () => {
-  const drakeTemplate = require('./assets/drake.jpg'); // Hardcoded template
+  const drakeTemplate = require('./assets/drake.jpg'); // Default template
 
   const [elements, setElements] = useState<{ [id: string]: CanvasElement }>({});
   const [showGuideLines, setShowGuideLines] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [editingId, setEditingId] = useState<string | undefined>(undefined);
   const [showStyleSheet, setShowStyleSheet] = useState(false);
+  const [showImageSelection, setShowImageSelection] = useState(false);
+  const [backgroundImage, setBackgroundImage] = useState(drakeTemplate);
 
   const viewShotRef = useRef(null);
 
-  const imageHeight = useImageHeight(drakeTemplate);
+  const imageHeight = useImageHeight(backgroundImage);
 
   // Shared values for zoom functionality
   const scale = useSharedValue(1);
@@ -98,6 +100,20 @@ const App = () => {
     setElements(prev => ({ ...prev, [newTextElement.id]: newTextElement }));
   };
 
+  // Function to handle background image selection
+  const handleImageSelect = (imageUrl: string) => {
+    // Clear all elements when changing background
+    setElements({});
+    setSelectedId(undefined);
+    setEditingId(undefined);
+    
+    // Set new background image
+    setBackgroundImage({ uri: imageUrl });
+  };
+
+  // Check if there are unsaved changes (any elements on canvas)
+  const hasUnsavedChanges = Object.keys(elements).length > 0;
+
   // Double tap gesture to reset zoom
   const doubleTapGesture = Gesture.Tap()
     .numberOfTaps(2)
@@ -167,9 +183,9 @@ const App = () => {
             <Animated.View style={[animatedCanvasStyle]}>
               <View style={styles.canvas}>
                 <ImageBackground
-                  source={drakeTemplate}
-                  style={[{ height: imageHeight }, styles.canvasImage]}
-                  resizeMode="center"
+                  source={backgroundImage}
+                  style={[{ height: imageHeight, backgroundColor: 'red' }, styles.canvasImage]}
+                  resizeMode='cover'
                 >
                   {/* Guide lines for center alignment */}
                   {showGuideLines && (
@@ -202,6 +218,7 @@ const App = () => {
           </ViewShot>
         </GestureDetector>
         <View style={styles.controls}>
+          <Button variant="secondary" title="Change Background" onPress={() => setShowImageSelection(true)} />
           <Button variant="primary" title="Add Text" onPress={addText} />
           <Button variant="primary" title="Save Meme" /* onPress={onSave} */ />
         </View>
@@ -213,6 +230,14 @@ const App = () => {
         onClose={() => setShowStyleSheet(false)}
         currentStyle={selectedId ? elements[selectedId].style : undefined}
         onStyleChange={style => onUpdateTextStyle(selectedId!, style)}
+      />
+
+      {/* Image Selection Bottom Sheet */}
+      <ImageSelectionBottomSheet
+        visible={showImageSelection}
+        onClose={() => setShowImageSelection(false)}
+        onImageSelect={handleImageSelect}
+        hasUnsavedChanges={hasUnsavedChanges}
       />
     </GestureHandlerRootView>
   );
