@@ -17,6 +17,7 @@ const App = () => {
   const [elements, setElements] = useState<CanvasElement[]>([]);
   const [editingElementId, setEditingElementId] = useState<string | null>(null);
   const [imageHeight, setImageHeight] = useState(0);
+  const [showGuideLines, setShowGuideLines] = useState(false);
 
   const viewShotRef = useRef(null);
   const drakeTemplate = require('./assets/drake.jpg'); // Hardcoded template
@@ -62,6 +63,12 @@ const App = () => {
   const onDragEnd = (elementId: string, newPosition: { x: number; y: number }) => {
     console.log(elementId, newPosition);
     setElements(prev => prev.map(el => (el.id === elementId ? { ...el, x: newPosition.x, y: newPosition.y } : el)));
+    setShowGuideLines(false); // Hide guide lines when dragging ends
+  };
+
+  // Function to handle drag start
+  const onDragStart = () => {
+    setShowGuideLines(true); // Show guide lines when dragging starts
   };
 
   // Function to update text content
@@ -69,9 +76,32 @@ const App = () => {
     setElements(prev => prev.map(el => (el.id === elementId ? { ...el, text: newText } : el)));
   };
 
+  // Function to update text style
+  const onUpdateTextStyle = (elementId: string, newStyle: any) => {
+    setElements(prev =>
+      prev.map(el =>
+        el.id === elementId
+          ? {
+              ...el,
+              color: newStyle.color,
+              fontWeight: newStyle.fontWeight,
+              fontStyle: newStyle.fontStyle,
+              textDecorationLine: newStyle.textDecorationLine,
+              fontSize: newStyle.fontSize,
+            }
+          : el,
+      ),
+    );
+  };
+
   // Function to handle editing state
   const onEditingChange = (elementId: string, isEditing: boolean) => {
     setEditingElementId(isEditing ? elementId : null);
+  };
+
+  // Function to delete an element
+  const onDeleteElement = (elementId: string) => {
+    setElements(prev => prev.filter(el => el.id !== elementId));
   };
 
   // Function to handle canvas press (click outside)
@@ -89,6 +119,12 @@ const App = () => {
       text: 'New Text',
       x: 0,
       y: 0,
+      // Default styling
+      color: '#000000',
+      fontWeight: 'normal',
+      fontStyle: 'normal',
+      textDecorationLine: 'none',
+      fontSize: 24,
     };
     setElements(prev => [...prev, newTextElement]);
   };
@@ -161,9 +197,19 @@ const App = () => {
               <View style={styles.canvas}>
                 <ImageBackground
                   source={drakeTemplate}
-                  style={[{ height: imageHeight}, styles.canvasImage]}
+                  style={[{ height: imageHeight }, styles.canvasImage]}
                   resizeMode="center"
                 >
+                  {/* Guide lines for center alignment */}
+                  {showGuideLines && (
+                    <>
+                      {/* Vertical center line */}
+                      <View style={styles.verticalLine} />
+                      {/* Horizontal center line */}
+                      <View style={styles.horizontalLine} />
+                    </>
+                  )}
+
                   {elements.map(el => (
                     <DraggableText
                       key={el.id}
@@ -173,8 +219,20 @@ const App = () => {
                       text={el.text}
                       isEditing={editingElementId === el.id}
                       onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
+                      onDragStart={onDragStart}
                       onUpdateText={newText => onUpdateText(el.id, newText)}
                       onEditingChange={isEditing => onEditingChange(el.id, isEditing)}
+                      onDelete={onDeleteElement}
+                      canvasWidth={SCREEN_WIDTH - SPACING.md * 2}
+                      canvasHeight={imageHeight}
+                      textStyle={{
+                        color: el.color!,
+                        fontWeight: el.fontWeight,
+                        fontStyle: el.fontStyle,
+                        textDecorationLine: el.textDecorationLine,
+                        fontSize: el.fontSize!,
+                      }}
+                      onStyleChange={newStyle => onUpdateTextStyle(el.id, newStyle)}
                     />
                   ))}
                 </ImageBackground>

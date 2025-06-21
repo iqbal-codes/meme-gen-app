@@ -1,5 +1,5 @@
 import { Platform, StyleSheet } from 'react-native';
-import { SPACING } from './constants/theme';
+import { COLORS, SPACING } from './constants/theme';
 import { createShadow } from './libs/shadowUtils';
 
 export default StyleSheet.create({
@@ -30,5 +30,28 @@ export default StyleSheet.create({
     padding: SPACING.md,
     width: '100%',
     gap: SPACING.sm,
+  },
+  verticalLine: {
+    position: 'absolute',
+    left: '50%',
+    top: 0,
+    bottom: 0,
+    width: 1,
+    opacity: 0.8,
+    zIndex: 999,
+    transform: [{ translateX: -0.5 }],
+    borderStyle: 'dashed',
+    borderRightWidth: 1,
+  },
+  horizontalLine: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    height: 1,
+    opacity: 0.8,
+    zIndex: 999,
+    transform: [{ translateY: -0.5 }],
+    borderStyle: 'dashed',
+    borderBottomWidth: 1,
   },
 });

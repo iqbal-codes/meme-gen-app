@@ -1,4 +1,4 @@
-import { Dimensions, StyleProp, TextStyle } from 'react-native';
+import { Dimensions, TextStyle } from 'react-native';
 
 // Design tokens - shadcn style
 export const COLORS = {
@@ -39,6 +39,10 @@ export const COLORS = {
   success: '#22c55e',
   warning: '#f59e0b',
   info: '#3b82f6',
+  
+  // text colors
+  text: '#18181b',
+  textForeground: '#ffffff',
 };
 
 // Radius values
@@ -148,3 +152,10 @@ export const SCREEN_HEIGHT = Dimensions.get('window').height;
 export const FONT_SIZES = FONT.sizes;
 export const FONT_WEIGHTS = FONT.weights;
 export const BORDER_RADIUS = RADIUS;
+
+export const NO_PADDING = {
+  paddingTop: 0,
+  paddingBottom: 0,
+  paddingLeft: 0,
+  paddingRight: 0,
+};
