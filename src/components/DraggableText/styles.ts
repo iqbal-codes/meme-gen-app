@@ -20,5 +20,6 @@ export default StyleSheet.create({
   bordered: {
     borderWidth: 1,
     borderColor: COLORS.ring,
+    borderStyle: 'dashed',
   },
 });

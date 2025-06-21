@@ -80,7 +80,7 @@ const Button: React.FC<ButtonProps> = ({
       ) : (
         <View style={styles.contentContainer}>
           {leftIcon && <View style={styles.iconContainer}>{leftIcon}</View>}
-          <Text style={getTextStyle()}>{title}</Text>
+          {title && <Text style={getTextStyle()}>{title}</Text>}
           {rightIcon && <View style={styles.iconContainer}>{rightIcon}</View>}
         </View>
       )}

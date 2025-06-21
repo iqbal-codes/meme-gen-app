@@ -1,5 +1,5 @@
 // App.js
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { View, ImageBackground, Image } from 'react-native';
 import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
@@ -11,16 +11,23 @@ import { CanvasElement } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SCREEN_WIDTH, SPACING } from './constants/theme';
 import Button from './components/Button';
+import { TextStyleBottomSheet } from './components';
+import { TextStyle } from './components/TextStyleBottomSheet';
+import useImageHeight from './hooks/useImageHeight';
 // We will create this component in the next step
 
 const App = () => {
-  const [elements, setElements] = useState<CanvasElement[]>([]);
-  const [editingElementId, setEditingElementId] = useState<string | null>(null);
-  const [imageHeight, setImageHeight] = useState(0);
+  const drakeTemplate = require('./assets/drake.jpg'); // Hardcoded template
+
+  const [elements, setElements] = useState<{ [id: string]: CanvasElement }>({});
   const [showGuideLines, setShowGuideLines] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
+  const [editingId, setEditingId] = useState<string | undefined>(undefined);
+  const [showStyleSheet, setShowStyleSheet] = useState(false);
 
   const viewShotRef = useRef(null);
-  const drakeTemplate = require('./assets/drake.jpg'); // Hardcoded template
+
+  const imageHeight = useImageHeight(drakeTemplate);
 
   // Shared values for zoom functionality
   const scale = useSharedValue(1);
@@ -33,36 +40,12 @@ const App = () => {
   const contextX = useSharedValue(0);
   const contextY = useSharedValue(0);
 
-  useEffect(() => {
-    if (typeof drakeTemplate === 'number') {
-      // For static local images (e.g., require('./image.png'))
-      const imageAsset = Image.resolveAssetSource(drakeTemplate);
-      if (imageAsset && imageAsset.width && imageAsset.height) {
-        const aspectRatio = imageAsset.width / imageAsset.height;
-        const calculatedHeight = (SCREEN_WIDTH - SPACING.md * 2) / aspectRatio;
-        setImageHeight(calculatedHeight);
-      }
-    } else if (typeof drakeTemplate === 'object' && drakeTemplate.uri) {
-      // For remote images (e.g., { uri: 'http://example.com/image.jpg' })
-      Image.getSize(
-        drakeTemplate.uri,
-        (width, height) => {
-          const aspectRatio = width / height;
-          const calculatedHeight = (SCREEN_WIDTH - SPACING.md * 2) / aspectRatio;
-          setImageHeight(calculatedHeight);
-        },
-        error => {
-          console.error(`Couldn't get image size: ${error.message}`);
-          // Fallback or error handling
-        },
-      );
-    }
-  }, [drakeTemplate]); // Recalculate if the image source changes
-
   // Function to update element position in state after dragging stops
-  const onDragEnd = (elementId: string, newPosition: { x: number; y: number }) => {
+  const onDragEnd = (elementId: string, newPosition?: { x: number; y: number }) => {
     console.log(elementId, newPosition);
-    setElements(prev => prev.map(el => (el.id === elementId ? { ...el, x: newPosition.x, y: newPosition.y } : el)));
+    if (newPosition) {
+      setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], x: newPosition.x, y: newPosition.y } }));
+    }
     setShowGuideLines(false); // Hide guide lines when dragging ends
   };
 
@@ -73,42 +56,26 @@ const App = () => {
 
   // Function to update text content
   const onUpdateText = (elementId: string, newText: string) => {
-    setElements(prev => prev.map(el => (el.id === elementId ? { ...el, text: newText } : el)));
+    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], text: newText } }));
   };
 
   // Function to update text style
-  const onUpdateTextStyle = (elementId: string, newStyle: any) => {
-    setElements(prev =>
-      prev.map(el =>
-        el.id === elementId
-          ? {
-              ...el,
-              color: newStyle.color,
-              fontWeight: newStyle.fontWeight,
-              fontStyle: newStyle.fontStyle,
-              textDecorationLine: newStyle.textDecorationLine,
-              fontSize: newStyle.fontSize,
-            }
-          : el,
-      ),
-    );
-  };
-
-  // Function to handle editing state
-  const onEditingChange = (elementId: string, isEditing: boolean) => {
-    setEditingElementId(isEditing ? elementId : null);
+  const onUpdateTextStyle = (elementId: string, newStyle: TextStyle) => {
+    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], style: newStyle } }));
   };
 
   // Function to delete an element
   const onDeleteElement = (elementId: string) => {
-    setElements(prev => prev.filter(el => el.id !== elementId));
+    const tempResult = { ...elements };
+    delete tempResult[elementId];
+    setElements(tempResult);
   };
 
   // Function to handle canvas press (click outside)
   const handleCanvasPress = () => {
     // Only reset editing state if we're not in the middle of a pinch gesture
-    if (editingElementId && scale.value === 1) {
-      setEditingElementId(null);
+    if (editingId && scale.value === 1) {
+      setEditingId(undefined);
     }
   };
 
@@ -119,14 +86,16 @@ const App = () => {
       text: 'New Text',
       x: 0,
       y: 0,
+      style: {
+        color: '#000000',
+        fontWeight: 'normal',
+        fontStyle: 'normal',
+        textDecorationLine: 'none',
+        fontSize: 24,
+      },
       // Default styling
-      color: '#000000',
-      fontWeight: 'normal',
-      fontStyle: 'normal',
-      textDecorationLine: 'none',
-      fontSize: 24,
     };
-    setElements(prev => [...prev, newTextElement]);
+    setElements(prev => ({ ...prev, [newTextElement.id]: newTextElement }));
   };
 
   // Double tap gesture to reset zoom
@@ -143,6 +112,8 @@ const App = () => {
   const oneTapGesture = Gesture.Tap()
     .runOnJS(true)
     .onStart(() => {
+      setSelectedId(undefined);
+      setEditingId(undefined);
       handleCanvasPress();
     });
 
@@ -210,29 +181,19 @@ const App = () => {
                     </>
                   )}
 
-                  {elements.map(el => (
+                  {Object.values(elements).map(el => (
                     <DraggableText
                       key={el.id}
-                      elementId={el.id}
-                      initialX={el.x}
-                      initialY={el.y}
-                      text={el.text}
-                      isEditing={editingElementId === el.id}
+                      element={el}
                       onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
                       onDragStart={onDragStart}
                       onUpdateText={newText => onUpdateText(el.id, newText)}
-                      onEditingChange={isEditing => onEditingChange(el.id, isEditing)}
-                      onDelete={onDeleteElement}
                       canvasWidth={SCREEN_WIDTH - SPACING.md * 2}
                       canvasHeight={imageHeight}
-                      textStyle={{
-                        color: el.color!,
-                        fontWeight: el.fontWeight,
-                        fontStyle: el.fontStyle,
-                        textDecorationLine: el.textDecorationLine,
-                        fontSize: el.fontSize!,
-                      }}
-                      onStyleChange={newStyle => onUpdateTextStyle(el.id, newStyle)}
+                      onEdit={id => setEditingId(id)}
+                      onSelect={id => setSelectedId(id)}
+                      isSelecting={selectedId === el.id}
+                      isEditing={editingId === el.id}
                     />
                   ))}
                 </ImageBackground>
@@ -240,12 +201,19 @@ const App = () => {
             </Animated.View>
           </ViewShot>
         </GestureDetector>
-
         <View style={styles.controls}>
           <Button variant="primary" title="Add Text" onPress={addText} />
           <Button variant="primary" title="Save Meme" /* onPress={onSave} */ />
         </View>
       </SafeAreaView>
+
+      {/* Text Style Bottom Sheet */}
+      <TextStyleBottomSheet
+        visible={showStyleSheet}
+        onClose={() => setShowStyleSheet(false)}
+        currentStyle={selectedId ? elements[selectedId].style : undefined}
+        onStyleChange={style => onUpdateTextStyle(selectedId!, style)}
+      />
     </GestureHandlerRootView>
   );
 };

@@ -7,65 +7,46 @@ import styles from './styles.ts';
 import { COLORS, FONT, SCREEN_WIDTH, SPACING } from '../../constants/theme';
 import Button from '../Button';
 import TextStyleBottomSheet, { TextStyle } from '../TextStyleBottomSheet';
+import { Edit, Trash } from 'lucide-react-native';
+import ButtonIcon from '../ButtonIcon/index.tsx';
+import { CanvasElement } from '../../types/index.ts';
 
 interface DraggableTextProps {
-  elementId: string;
-  initialX: number;
-  initialY: number;
-  text: string;
-  isEditing: boolean;
-  onDragEnd: (position: { x: number; y: number }) => void;
-  onDragStart?: () => void;
+  element: CanvasElement;
+  onDragEnd: (position?: { x: number; y: number }) => void;
+  onDragStart: () => void;
   onUpdateText: (text: string) => void;
-  onEditingChange: (isEditing: boolean) => void;
   onTransform?: (transform: { scale: number; rotation: number }) => void;
   canvasWidth?: number;
   canvasHeight?: number;
-  onDelete?: (elementId: string) => void;
-  // Text styling properties
-  textStyle?: TextStyle;
-  onStyleChange?: (style: TextStyle) => void;
+  isSelecting: boolean;
+  isEditing: boolean;
+  onEdit: (id?: string) => void;
+  onSelect: (id?: string) => void;
 }
 
 // Threshold for snapping to center (in pixels)
 
 // Threshold for snapping to center (in pixels)
-const SNAP_THRESHOLD = 10;
+const SNAP_THRESHOLD = 5;
 
 const DraggableText = ({
-  elementId,
-  initialX,
-  initialY,
-  text,
+  element,
   isEditing,
   onDragEnd,
   onDragStart,
   onUpdateText,
-  onEditingChange,
+  onEdit,
   onTransform,
   canvasWidth = SCREEN_WIDTH - SPACING.md * 2, // Default to screen width minus padding
   canvasHeight = 400,
-  onDelete,
-  textStyle = {} as TextStyle,
-  onStyleChange,
+  isSelecting,
+  onSelect,
 }: DraggableTextProps) => {
   const isPressed = useSharedValue(false);
-  const translateX = useSharedValue(initialX);
-  const translateY = useSharedValue(initialY);
+  const translateX = useSharedValue(element.x);
+  const translateY = useSharedValue(element.y);
   const offset = useSharedValue({ x: 0, y: 0 });
-
-  // Add state for selection mode and bottom sheet
-  const [isSelected, setIsSelected] = useState(false);
-  const [showStyleSheet, setShowStyleSheet] = useState(false);
-
-  // Default text style
-  const defaultTextStyle: TextStyle = {
-    color: textStyle.color || COLORS.text,
-    fontWeight: textStyle.fontWeight || 'normal',
-    fontStyle: textStyle.fontStyle || 'normal',
-    textDecorationLine: textStyle.textDecorationLine || 'none',
-    fontSize: textStyle.fontSize || FONT.sizes['2xl'],
-  };
 
   // Add shared values for rotation
   const rotation = useSharedValue(0);
@@ -76,13 +57,14 @@ const DraggableText = ({
     .runOnJS(true)
     .numberOfTaps(1)
     .onStart(() => {
-      if (isSelected) {
+      console.log('test');
+      if (isSelecting) {
         // If already selected, enter edit mode on second tap
-        onEditingChange(true);
-        setIsSelected(false);
+        onEdit(element.id);
+        onSelect(element.id);
       } else {
         // First tap selects the text
-        setIsSelected(true);
+        onSelect(element.id);
       }
     });
 
@@ -101,12 +83,11 @@ const DraggableText = ({
         y: translateY.value,
       };
     })
-    .runOnJS(true)
     .onTouchesDown(() => {
       // Trigger guide lines when drag starts
-      if (onDragStart) {
-        onDragStart();
-      }
+      onDragStart();
+    }).onTouchesUp(() => {
+      onDragEnd();
     })
     .onUpdate(event => {
       'worklet';
@@ -225,7 +206,6 @@ const DraggableText = ({
       { translateY: translateY.value },
       { rotateZ: `${rotation.value}rad` },
     ],
-    opacity: isPressed.value ? 0.8 : 1,
     zIndex: isPressed.value ? 1000 : 1,
   }));
 
@@ -234,81 +214,23 @@ const DraggableText = ({
     event.stopPropagation();
   };
 
-  // Handle delete button press
-  const handleDelete = () => {
-    if (onDelete) {
-      onDelete(elementId);
-    }
-    setIsSelected(false);
-  };
-
-  // Handle edit style button press
-  const handleEditStyle = () => {
-    setShowStyleSheet(true);
-    setIsSelected(false);
-  };
-
-  // Handle style change from bottom sheet
-  const handleStyleChange = (newStyle: TextStyle) => {
-    if (onStyleChange) {
-      onStyleChange(newStyle);
-    }
-  };
-
   return (
     <GestureDetector gesture={combinedGesture}>
       <Animated.View style={[styles.draggable, animatedStyle]} onTouchStart={handleTouch}>
         {isEditing ? (
           <TextInput
-            style={[styles.text, styles.bordered]}
-            value={text}
+            style={[styles.text, styles.bordered, element.style as StyleProp<RNTextStyle>]}
+            value={element.text}
             onChangeText={onUpdateText}
             multiline
             autoFocus
-            onBlur={() => onEditingChange(false)}
+            onBlur={() => onEdit()}
           />
         ) : (
-          <Text
-            style={[
-              styles.text,
-              isSelected && styles.bordered,
-              {
-                color: defaultTextStyle.color,
-                fontWeight: defaultTextStyle.fontWeight,
-                fontStyle: defaultTextStyle.fontStyle,
-                textDecorationLine: defaultTextStyle.textDecorationLine,
-                fontSize: defaultTextStyle.fontSize,
-              } as StyleProp<RNTextStyle>,
-            ]}
-          >
-            {text}
+          <Text style={[styles.text, isSelecting && styles.bordered, element.style as StyleProp<RNTextStyle>]}>
+            {element.text}
           </Text>
         )}
-
-        {/* Selection controls */}
-        {isSelected && !isEditing && (
-          <View
-            style={{
-              position: 'absolute',
-              top: -40,
-              flexDirection: 'row',
-              justifyContent: 'center',
-              width: '100%',
-              gap: SPACING.xs,
-            }}
-          >
-            <Button title="Edit" variant="primary" size="small" onPress={handleEditStyle} />
-            <Button title="Delete" variant="danger" size="small" onPress={handleDelete} />
-          </View>
-        )}
-
-        {/* Text Style Bottom Sheet */}
-        <TextStyleBottomSheet
-          visible={showStyleSheet}
-          onClose={() => setShowStyleSheet(false)}
-          currentStyle={defaultTextStyle}
-          onStyleChange={handleStyleChange}
-        />
       </Animated.View>
     </GestureDetector>
   );

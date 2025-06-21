@@ -20,10 +20,18 @@ export interface TextStyle {
   fontSize: number;
 }
 
+const DEFAULT_TEXT_STYLE: TextStyle = {
+  color: '#000000',
+  fontWeight: 'normal',
+  fontStyle: 'normal',
+  textDecorationLine: 'none',
+  fontSize: 24,
+};
+
 interface TextStyleBottomSheetProps {
   visible: boolean;
   onClose: () => void;
-  currentStyle: TextStyle;
+  currentStyle?: TextStyle;
   onStyleChange: (style: TextStyle) => void;
 }
 
@@ -45,7 +53,7 @@ const fontSizes = [12, 14, 16, 18, 20, 24, 28, 32, 36, 48];
 const TextStyleBottomSheet: React.FC<TextStyleBottomSheetProps> = ({
   visible,
   onClose,
-  currentStyle,
+  currentStyle = DEFAULT_TEXT_STYLE,
   onStyleChange,
 }) => {
   const updateStyle = (updates: Partial<TextStyle>) => {
