@@ -17,7 +17,7 @@ export default StyleSheet.create({
     borderRadius: RADIUS.md,
   },
 
-  // Variants
+  // Variants with shadow
   primaryButton: {
     backgroundColor: COLORS.primary,
     boxShadow: BOX_SHADOWS.md,
@@ -30,6 +30,7 @@ export default StyleSheet.create({
     backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.primary,
+    boxShadow: BOX_SHADOWS.md,
   },
   ghostButton: {
     backgroundColor: 'transparent',
@@ -37,6 +38,25 @@ export default StyleSheet.create({
   dangerButton: {
     backgroundColor: COLORS.destructive,
     boxShadow: BOX_SHADOWS.md,
+  },
+
+  // Variants without shadow
+  primaryButtonNoShadow: {
+    backgroundColor: COLORS.primary,
+  },
+  secondaryButtonNoShadow: {
+    backgroundColor: COLORS.secondary,
+  },
+  outlineButtonNoShadow: {
+    backgroundColor: COLORS.background,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  ghostButtonNoShadow: {
+    backgroundColor: 'transparent',
+  },
+  dangerButtonNoShadow: {
+    backgroundColor: COLORS.destructive,
   },
 
   // Regular button sizes

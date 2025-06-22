@@ -1,10 +1,11 @@
 // App.js
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View,
   ImageBackground,
   Platform,
   PermissionsAndroid,
+  PixelRatio,
 } from 'react-native';
 import {
   GestureHandlerRootView,
@@ -15,7 +16,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import ViewShot from 'react-native-view-shot';
+import ViewShot, { captureRef } from 'react-native-view-shot';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { DraggableElement } from './components';
 import styles from './styles';
@@ -30,7 +31,15 @@ import {
 } from './components';
 import { TextStyle } from './components/TextStyleBottomSheet';
 import useImageHeight from './hooks/useImageHeight';
-import { Images, Save, Type, Edit, Copy, Trash2, Paintbrush } from 'lucide-react-native';
+import {
+  Images,
+  Save,
+  Type,
+  Edit,
+  Copy,
+  Trash2,
+  Paintbrush,
+} from 'lucide-react-native';
 // We will create this component in the next step
 
 const CANVAS_WIDTH = SCREEN_WIDTH - SIZING.md * 2;
@@ -329,16 +338,38 @@ const App = () => {
     }
   };
 
-  // Function to handle edit element
-  const onEditElement = (elementId: string) => {
-    const element = elements[elementId];
-    if (element?.type === 'text') {
-      setEditingId(elementId);
-    } else if (element?.type === 'image') {
-      // For images, you might want to open photo picker or image editor
-      // For now, we'll just open the photo picker
-      addImage();
-    }
+  const updateElement = useCallback((updatedElement: CanvasElement) => {
+    setElements(prev => ({ ...prev, [updatedElement.id]: updatedElement }));
+  }, []);
+
+  const onSave = async () => {
+    const targetPixelCount = 1080; // If you want full HD pictures
+    const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
+    // pixels * pixelRatio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
+    const pixels = targetPixelCount / pixelRatio;
+
+    const result = await captureRef(viewShotRef, {
+      result: 'tmpfile',
+      height: pixels,
+      width: pixels,
+      quality: 1,
+      format: 'png',
+    });
+
+    // Save to gallery
+    const saveResult = await CameraRoll.saveAsset(result, {
+      type: 'photo',
+      album: 'Memes', // Optional: create/save to a specific album
+    });
+
+    console.log({ result });
+  };
+
+  // Function to clear all elements on canvas
+  const clearCanvas = () => {
+    setElements({});
+    setSelectedId(undefined);
+    setEditingId(undefined);
   };
 
   return (
@@ -369,31 +400,28 @@ const App = () => {
                     ]}
                     resizeMode="cover"
                   >
-                    {/* Guide lines for center alignment */}
+                    {/* Enhanced guide lines for alignment */}
                     {showGuideLines && (
                       <>
-                        {/* Vertical center line */}
+                        {/* Main center lines */}
                         <View style={styles.verticalLine} />
-                        {/* Horizontal center line */}
                         <View style={styles.horizontalLine} />
                       </>
                     )}
-                    {Object.values(elements).map(el => (
+                    {(Object.values(elements) || []).map(el => (
                       <DraggableElement
                         key={el.id}
                         element={el}
                         onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
                         onDragStart={onDragStart}
                         onUpdateText={newText => onUpdateText(el.id, newText)}
-                        onUpdateImage={newImageUri =>
-                          onUpdateImage(el.id, newImageUri)
-                        }
                         canvasWidth={CANVAS_WIDTH}
                         canvasHeight={imageHeight}
-                        onEdit={id => setEditingId(id)}
-                        onSelect={id => setSelectedId(id)}
+                        onEdit={() => setEditingId(el.id)}
+                        onSelect={() => setSelectedId(el.id)}
                         isSelecting={selectedId === el.id}
                         isEditing={editingId === el.id}
+                        onUpdateElement={updateElement}
                       />
                     ))}
                   </ImageBackground>
@@ -401,44 +429,43 @@ const App = () => {
               </Animated.View>
             </View>
           </GestureDetector>
-
+          {/* Floating Add Element Buttons */}
           <View style={styles.floatingAddElementContainer}>
             <Button
               rounded="full"
               variant="secondary"
               icon={<Type color={COLORS.primary} size={20} />}
               onPress={addText}
-              size='large'
+              size="large"
             />
             <Button
               rounded="full"
               variant="secondary"
-              size='large'
+              size="large"
               icon={<Images color={COLORS.primary} size={20} />}
               onPress={addImage}
             />
           </View>
+          {/* Floating Edit Element Buttons */}
           {selectedId && (
             <View style={styles.floatingEditElementContainer}>
-              {elements[selectedId]?.type === 'text' && (
-                <Button
-                  rounded="full"
-                  size='large'
-                  variant="primary"
-                  icon={<Paintbrush color={COLORS.accent} size={20} />}
-                  onPress={() => onEditElement(selectedId)}
-                />
-              )}
+              <Button
+                rounded="full"
+                size="large"
+                variant="primary"
+                icon={<Paintbrush color={COLORS.accent} size={20} />}
+                onPress={() => setShowStyleSheet(true)}
+              />
               <Button
                 rounded="full"
                 variant="secondary"
-                size='large'
+                size="large"
                 icon={<Copy color={COLORS.primary} size={20} />}
                 onPress={() => onCopyElement(selectedId)}
               />
               <Button
                 rounded="full"
-                size='large'
+                size="large"
                 variant="danger"
                 icon={<Trash2 color={COLORS.accent} size={20} />}
                 onPress={() => {
@@ -449,7 +476,6 @@ const App = () => {
             </View>
           )}
         </View>
-        {/* Floating Action Buttons */}
         {/* Control Buttons */}
         <View style={styles.controls}>
           <View
@@ -463,22 +489,23 @@ const App = () => {
           >
             <Button
               rounded="full"
-              variant="primary"
+              variant="secondary"
               title="Background"
               onPress={() => setShowImageSelection(true)}
             />
             <Button
               rounded="full"
-              variant="primary"
+              variant="secondary"
               title="Clear All"
-              onPress={() => setElements({})}
+              onPress={clearCanvas}
             />
           </View>
           <Button
-            variant="secondary"
+            variant="primary"
             title="Save"
             rounded="full"
-            leftIcon={<Save color={COLORS.primary} size={20} />}
+            leftIcon={<Save color={COLORS.secondary} size={20} />}
+            onPress={onSave}
           />
         </View>
       </SafeAreaView>
@@ -487,7 +514,11 @@ const App = () => {
       <TextStyleBottomSheet
         visible={showStyleSheet}
         onClose={() => setShowStyleSheet(false)}
-        currentStyle={selectedId ? elements[selectedId].style : undefined}
+        currentStyle={
+          selectedId && elements[selectedId]
+            ? elements[selectedId].style
+            : undefined
+        }
         onStyleChange={style => onUpdateTextStyle(selectedId!, style)}
       />
 

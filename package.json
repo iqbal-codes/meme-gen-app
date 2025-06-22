@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@react-native-camera-roll/camera-roll": "patch:@react-native-camera-roll/camera-roll@npm%3A7.10.0#~/.yarn/patches/@react-native-camera-roll-camera-roll-npm-7.10.0-47b8beecbb.patch",
+    "@react-native-community/slider": "^4.5.7",
     "lucide-react-native": "^0.522.0",
     "react": "19.1.0",
     "react-native": "0.80.0",

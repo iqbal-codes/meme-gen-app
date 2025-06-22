@@ -10,6 +10,7 @@ export type CanvasElement = {
   width?: number; // For image elements
   height?: number; // For image elements
   style?: TextStyle; // Optional for image elements
+  scale?: number;
 }
 
 export type MemeTemplate = {

@@ -10,11 +10,13 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   text: {
+    ...NO_PADDING,
     fontSize: FONT.sizes['2xl'],
     fontWeight: FONT.weights.bold,
     textAlign: 'center',
     color: COLORS.foreground,
-    ...NO_PADDING,
+    paddingLeft: SIZING[2],
+    paddingRight: SIZING[2],
   },
   bordered: {
     borderWidth: 1,

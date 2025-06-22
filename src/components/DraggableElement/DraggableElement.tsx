@@ -1,14 +1,10 @@
-import React from 'react';
-import { Image, Text, TextInput, View, TextStyle } from 'react-native';
-import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
+import React, { useRef, useCallback, useState, useLayoutEffect } from 'react';
+import { Image, Text, TextInput, View, TextStyle, GestureResponderEvent } from 'react-native';
+import { GestureDetector } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import { CanvasElement } from '../../types';
 import { SCREEN_WIDTH, SIZING } from '../../constants/theme';
-import useDragGestures from './hooks/useDragGestures';
-import useSelectionGestures from './hooks/useSelectionGestures';
+import useElementGestures from './hooks/useElementGestures';
 import styles from './styles';
 
 interface DraggableElementProps {
@@ -24,6 +20,7 @@ interface DraggableElementProps {
   isEditing: boolean;
   onEdit: (id?: string) => void;
   onSelect: (id?: string) => void;
+  onUpdateElement?: (element: CanvasElement) => void;
 }
 
 const DraggableElement: React.FC<DraggableElementProps> = ({
@@ -35,59 +32,74 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
   onUpdateImage,
   onEdit,
   onTransform,
+  onUpdateElement,
   canvasWidth = SCREEN_WIDTH - SIZING.md * 2,
   canvasHeight = 400,
   isSelecting,
   onSelect,
 }) => {
-  const isPressed = useSharedValue(false);
-  const translateX = useSharedValue(element.x);
-  const translateY = useSharedValue(element.y);
-  const rotation = useSharedValue(0);
+  const elementRef = useRef<View>(null);
+  const [elementDimensions, setElementDimensions] = useState<{
+    width: number;
+    height: number;
+  } | null>(null);
 
-  // Custom hooks for gesture handling
-  const { panGesture, rotationGesture } = useDragGestures({
+  // Measure element dimensions using React Native's measure method
+  const measureElement = useCallback(() => {
+    if (elementRef.current) {
+      elementRef.current.measure((x, y, width, height, pageX, pageY) => {
+        const newDimensions = { width, height };
+        setElementDimensions(newDimensions);
+        
+        // Update the element with actual measured dimensions
+        if (onUpdateElement && (element.width !== width || element.height !== height)) {
+          onUpdateElement({ ...element, width, height });
+        }
+      });
+    }
+  }, [element, onUpdateElement]);
+
+  // Measure on layout changes and when text content changes
+  useLayoutEffect(() => {
+    // Small delay to ensure the layout is complete
+    const timer = setTimeout(measureElement, 0);
+    return () => clearTimeout(timer);
+  }, [measureElement, element.text, element.style]);
+
+  // Use measured dimensions or fallback to element dimensions
+  const currentDimensions = {
+    width:
+      elementDimensions?.width ||
+      element.width ||
+      (element.type === 'text' ? 100 : 150),
+    height:
+      elementDimensions?.height ||
+      element.height ||
+      (element.type === 'text' ? 36 : 150),
+  };
+
+  // Use unified gesture hook
+  const { combinedGesture, animatedStyle } = useElementGestures({
+    element,
     isEditing,
-    isPressed,
-    translateX,
-    translateY,
-    rotation,
+    isSelecting,
     canvasWidth,
     canvasHeight,
+    elementDimensions: currentDimensions,
     onDragStart,
     onDragEnd,
-    onTransform,
-  });
-
-  const { singleTapGesture } = useSelectionGestures({
-    element,
-    isSelecting,
     onEdit,
     onSelect,
+    onTransform,
+    onUpdateElement,
   });
 
-  // Combine gestures
-  const combinedGesture = Gesture.Simultaneous(
-    singleTapGesture,
-    panGesture,
-    rotationGesture,
-  );
-
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: translateX.value },
-      { translateY: translateY.value },
-      { rotateZ: `${rotation.value}rad` },
-    ],
-    zIndex: isPressed.value ? 1000 : 1,
-  }));
-
   // Handle touch to prevent canvas touch event propagation
-  const handleTouch = (event: any) => {
+  const handleTouch = (event: GestureResponderEvent) => {
     event.stopPropagation();
   };
 
-  const renderContent = () => {
+  const renderContent = useCallback(() => {
     if (element.type === 'text') {
       if (isEditing)
         return (
@@ -98,6 +110,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
             multiline
             autoFocus
             onBlur={() => onEdit()}
+            onLayout={measureElement}
           />
         );
 
@@ -108,6 +121,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
             isSelecting && styles.bordered,
             element.style as TextStyle,
           ]}
+          onLayout={measureElement}
         >
           {element.text}
         </Text>
@@ -124,16 +138,18 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
               },
             ]}
             resizeMode="cover"
+            onLayout={measureElement}
           />
         </View>
       );
     }
     return null;
-  };
+  }, [element, isEditing, isSelecting, measureElement]);
 
   return (
     <GestureDetector gesture={combinedGesture}>
       <Animated.View
+        ref={elementRef}
         style={[styles.draggable, animatedStyle]}
         onTouchStart={handleTouch}
       >

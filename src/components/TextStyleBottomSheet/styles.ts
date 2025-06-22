@@ -1,15 +1,28 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZING, FONT, RADIUS } from '../../constants/theme';
+import { COLORS, SIZING, FONT, RADIUS, BOX_SHADOWS } from '../../constants/theme';
 
 const styles = StyleSheet.create({
+  container: {
+    padding: SIZING[4],
+    gap: SIZING[2],
+  },
   section: {
-    marginBottom: SIZING.lg,
+    marginVertical: SIZING[1],
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    gap: SIZING[4],
+    padding: SIZING[4],
+    boxShadow: BOX_SHADOWS.md
+  },
+  buttonWrapper: {
+    flex: 1,
   },
   sectionTitle: {
     fontSize: FONT.sizes.base,
     fontWeight: FONT.weights.semibold,
     color: COLORS.text,
-    marginBottom: SIZING.sm,
+    marginBottom: SIZING[2],
   },
   colorGrid: {
     flexDirection: 'row',
@@ -17,9 +30,9 @@ const styles = StyleSheet.create({
     marginHorizontal: -SIZING.xs,
   },
   colorOption: {
-    width: 40,
-    height: 40,
-    borderRadius: RADIUS.sm,
+    width: SIZING[10],
+    height: SIZING[10],
+    borderRadius: RADIUS.full,
     margin: SIZING.xs,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -54,7 +67,8 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    marginHorizontal: -SIZING.xs,
+    flexWrap: 'wrap',
+    gap: SIZING[3],
   },
   buttonColumn: {
     marginHorizontal: -SIZING.xs,
