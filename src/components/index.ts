@@ -4,10 +4,12 @@
 export { default as Button } from './Button';
 export { default as ButtonIcon } from './ButtonIcon';
 
-// Text components
+// Draggable components
 export { default as DraggableText } from './DraggableText';
+export { default as DraggableElement } from './DraggableElement';
 
 // Bottom sheet components
 export { default as BaseBottomSheet } from './BaseBottomSheet';
 export { default as TextStyleBottomSheet } from './TextStyleBottomSheet';
-export { default as ImageSelectionBottomSheet } from './ImageSelectionBottomSheet';
+export { default as TemplatePickerBottomSheet } from './TemplatePickerBottomSheet';
+export { default as PhotoPickerBottomSheet } from './PhotoPickerBottomSheet';

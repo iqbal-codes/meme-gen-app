@@ -1,5 +1,5 @@
-import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { COLORS, RADIUS, SPACING, FONT } from '../constants/theme';
+import { Dimensions, StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import { COLORS, RADIUS, SPACING, FONT, SCREEN_WIDTH } from '../constants/theme';
 
 // Common variant styles for components
 export const variants = {
@@ -33,7 +33,7 @@ export const variants = {
       textDecorationLine: 'underline' as TextStyle['textDecorationLine'],
     },
   },
-  
+
   // Input variants
   input: {
     default: {
@@ -80,7 +80,7 @@ export const sizes = {
       padding: 0,
     },
   },
-  
+
   // Input sizes
   input: {
     sm: {
@@ -123,13 +123,76 @@ export const states = {
 // Helper to create component styles with variants
 export const createVariantStyles = <T extends Record<string, any>>(
   baseStyle: ViewStyle,
-  variantStyles: T
+  variantStyles: T,
 ): Record<keyof T, ViewStyle> => {
   const styles: Record<string, ViewStyle> = {};
-  
-  Object.keys(variantStyles).forEach((key) => {
+
+  Object.keys(variantStyles).forEach(key => {
     styles[key] = StyleSheet.flatten([baseStyle, variantStyles[key]]);
   });
-  
+
   return styles as Record<keyof T, ViewStyle>;
+};
+
+/**
+ * Calculate item width for FlatList based on number of columns, gap, and container padding
+ * @param numColumns - Number of columns in the FlatList
+ * @param gap - Gap between items (horizontal spacing)
+ * @param containerPadding - Horizontal padding of the container
+ * @param screenWidth - Screen width (optional, defaults to device width)
+ * @returns Calculated item width
+ */
+export const calculateFlatListItemWidth = ({
+  numColumns,
+  gap = 0,
+  containerPadding = 0,
+  screenWidth = SCREEN_WIDTH,
+}: {
+  numColumns: number;
+  gap?: number;
+  containerPadding?: number;
+  screenWidth?: number;
+}): number => {
+  // Calculate available width after removing container padding
+  const availableWidth = screenWidth - containerPadding * 2;
+
+  // Calculate total gap width (numColumns - 1 gaps between items)
+  const totalGapWidth = (numColumns - 1) * gap;
+
+  // Calculate item width
+  const itemWidth = (availableWidth - totalGapWidth) / numColumns;
+
+  return Math.floor(itemWidth);
+};
+
+/**
+ * Helper function to get common FlatList item dimensions
+ * Useful for creating square items or maintaining aspect ratios
+ */
+export const getFlatListItemDimensions = ({
+  numColumns,
+  gap = 0,
+  containerPadding = 0,
+  aspectRatio = 1, // 1 for square, 16/9 for landscape, etc.
+  screenWidth = SCREEN_WIDTH,
+}: {
+  numColumns: number;
+  gap?: number;
+  containerPadding?: number;
+  aspectRatio?: number;
+  screenWidth?: number;
+}) => {
+  const width = calculateFlatListItemWidth({
+    numColumns,
+    gap,
+    containerPadding,
+    screenWidth,
+  });
+
+  const height = width / aspectRatio;
+
+  return {
+    width,
+    height: Math.floor(height),
+  };
 };

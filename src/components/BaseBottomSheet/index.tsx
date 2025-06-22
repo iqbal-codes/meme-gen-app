@@ -38,10 +38,7 @@ const BaseBottomSheet: React.FC<BaseBottomSheetProps> = ({
             <Text style={styles.title}>{title}</Text>
             {headerAction}
           </View>
-
-          <ScrollView style={styles.content} showsVerticalScrollIndicator={showScrollIndicator}>
-            {children}
-          </ScrollView>
+          {children}
         </View>
       </View>
     </Modal>

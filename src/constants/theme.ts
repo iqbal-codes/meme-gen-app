@@ -15,15 +15,15 @@ export const COLORS = {
   primaryForeground: '#ffffff',
 
   // Secondary colors
-  secondary: '#f4f4f5',
+  secondary: '#f5f5f5',
   secondaryForeground: '#18181b',
 
   // Muted colors
-  muted: '#f4f4f5',
+  muted: '#f5f5f5',
   mutedForeground: '#71717a',
 
   // Accent colors
-  accent: '#f4f4f5',
+  accent: '#f5f5f5',
   accentForeground: '#18181b',
 
   // Destructive colors

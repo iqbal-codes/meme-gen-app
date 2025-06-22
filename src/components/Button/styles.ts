@@ -20,9 +20,9 @@ export default StyleSheet.create({
     backgroundColor: COLORS.secondary,
   },
   outlineButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: COLORS.background,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.primary,
   },
   ghostButton: {
     backgroundColor: 'transparent',
@@ -69,6 +69,7 @@ export default StyleSheet.create({
   },
   outlineText: {
     color: COLORS.foreground,
+
   },
   ghostText: {
     color: COLORS.foreground,

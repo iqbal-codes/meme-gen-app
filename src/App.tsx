@@ -1,19 +1,20 @@
 // App.js
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { View, ImageBackground, Image } from 'react-native';
+import { View, ImageBackground, Image, Platform, PermissionsAndroid } from 'react-native';
 import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import ViewShot from 'react-native-view-shot';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import DraggableText from './components/DraggableText';
+import { ButtonIcon, DraggableElement } from './components';
 import styles from './styles';
 import { CanvasElement } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { SCREEN_WIDTH, SPACING } from './constants/theme';
+import { COLORS, SCREEN_WIDTH, SPACING } from './constants/theme';
 import Button from './components/Button';
-import { TextStyleBottomSheet, ImageSelectionBottomSheet } from './components';
+import { TextStyleBottomSheet, TemplatePickerBottomSheet, PhotoPickerBottomSheet } from './components';
 import { TextStyle } from './components/TextStyleBottomSheet';
 import useImageHeight from './hooks/useImageHeight';
+import { Download, Images, Type } from 'lucide-react-native';
 // We will create this component in the next step
 
 const App = () => {
@@ -25,6 +26,8 @@ const App = () => {
   const [editingId, setEditingId] = useState<string | undefined>(undefined);
   const [showStyleSheet, setShowStyleSheet] = useState(false);
   const [showImageSelection, setShowImageSelection] = useState(false);
+  const [showPhotoPicker, setShowPhotoPicker] = useState(false);
+  const [availablePhotos, setAvailablePhotos] = useState<any[]>([]);
   const [backgroundImage, setBackgroundImage] = useState(drakeTemplate);
 
   const viewShotRef = useRef(null);
@@ -61,6 +64,11 @@ const App = () => {
     setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], text: newText } }));
   };
 
+  // Function to update image content
+  const onUpdateImage = (elementId: string, newImageUri: string) => {
+    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], imageUri: newImageUri } }));
+  };
+
   // Function to update text style
   const onUpdateTextStyle = (elementId: string, newStyle: TextStyle) => {
     setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], style: newStyle } }));
@@ -95,9 +103,90 @@ const App = () => {
         textDecorationLine: 'none',
         fontSize: 24,
       },
-      // Default styling
     };
     setElements(prev => ({ ...prev, [newTextElement.id]: newTextElement }));
+  };
+
+  const handlePhotoSelect = (imageUri: string) => {
+    const newImageElement: CanvasElement = {
+      id: String(Date.now()),
+      type: 'image',
+      imageUri,
+      x: 0,
+      y: 0,
+      width: 150,
+      height: 150,
+    };
+    setElements(prev => ({ ...prev, [newImageElement.id]: newImageElement }));
+  };
+
+  const hasAndroidPermission = async () => {
+    if (Platform.OS !== 'android') {
+      return true;
+    }
+
+    const getCheckPermissionPromise = async () => {
+      if (Number(Platform.Version) >= 33) {
+        return Promise.all([
+          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
+          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
+        ]).then(
+          ([hasReadMediaImagesPermission, hasReadMediaVideoPermission]) =>
+            hasReadMediaImagesPermission && hasReadMediaVideoPermission,
+        );
+      } else {
+        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+      }
+    };
+
+    const hasPermission = await getCheckPermissionPromise();
+    if (hasPermission) {
+      return true;
+    }
+
+    const getRequestPermissionPromise = async () => {
+      if (Number(Platform.Version) >= 33) {
+        return PermissionsAndroid.requestMultiple([
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+        ]).then(
+          statuses =>
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] === PermissionsAndroid.RESULTS.GRANTED &&
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] === PermissionsAndroid.RESULTS.GRANTED,
+        );
+      } else {
+        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE).then(
+          status => status === PermissionsAndroid.RESULTS.GRANTED,
+        );
+      }
+    };
+
+    return await getRequestPermissionPromise();
+  };
+
+  const addImage = async () => {
+    try {
+      // Check and request permissions for Android
+      if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+        console.log('Permission denied to access photo library');
+        return;
+      }
+
+      // Get photos from camera roll
+      const result = await CameraRoll.getPhotos({
+        first: 20, // Get recent photos for selection
+        assetType: 'Photos',
+      });
+
+      console.log({ result });
+
+      if (result.edges.length > 0) {
+        setAvailablePhotos(result.edges);
+        setShowPhotoPicker(true);
+      }
+    } catch (error) {
+      console.error('Error accessing photo library:', error);
+    }
   };
 
   // Function to handle background image selection
@@ -106,7 +195,7 @@ const App = () => {
     setElements({});
     setSelectedId(undefined);
     setEditingId(undefined);
-    
+
     // Set new background image
     setBackgroundImage({ uri: imageUrl });
   };
@@ -185,7 +274,7 @@ const App = () => {
                 <ImageBackground
                   source={backgroundImage}
                   style={[{ height: imageHeight, backgroundColor: 'red' }, styles.canvasImage]}
-                  resizeMode='cover'
+                  resizeMode="cover"
                 >
                   {/* Guide lines for center alignment */}
                   {showGuideLines && (
@@ -198,12 +287,13 @@ const App = () => {
                   )}
 
                   {Object.values(elements).map(el => (
-                    <DraggableText
+                    <DraggableElement
                       key={el.id}
                       element={el}
                       onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
                       onDragStart={onDragStart}
                       onUpdateText={newText => onUpdateText(el.id, newText)}
+                      onUpdateImage={newImageUri => onUpdateImage(el.id, newImageUri)}
                       canvasWidth={SCREEN_WIDTH - SPACING.md * 2}
                       canvasHeight={imageHeight}
                       onEdit={id => setEditingId(id)}
@@ -218,9 +308,10 @@ const App = () => {
           </ViewShot>
         </GestureDetector>
         <View style={styles.controls}>
-          <Button variant="secondary" title="Change Background" onPress={() => setShowImageSelection(true)} />
-          <Button variant="primary" title="Add Text" onPress={addText} />
-          <Button variant="primary" title="Save Meme" /* onPress={onSave} */ />
+          <ButtonIcon variant="primary" icon={<Type color={COLORS.accent} />} onPress={addText} />
+          <ButtonIcon variant="primary" icon={<Images color={COLORS.accent} />} onPress={addImage} />
+          <Button variant="primary" title="Background" onPress={() => setShowImageSelection(true)} />
+          {/* <Button variant="primary" title="Save" onPress={onSave} /> */}
         </View>
       </SafeAreaView>
 
@@ -232,12 +323,20 @@ const App = () => {
         onStyleChange={style => onUpdateTextStyle(selectedId!, style)}
       />
 
-      {/* Image Selection Bottom Sheet */}
-      <ImageSelectionBottomSheet
+      {/* Template Picker Bottom Sheet */}
+      <TemplatePickerBottomSheet
         visible={showImageSelection}
         onClose={() => setShowImageSelection(false)}
         onImageSelect={handleImageSelect}
         hasUnsavedChanges={hasUnsavedChanges}
+      />
+
+      {/* Photo Picker Bottom Sheet */}
+      <PhotoPickerBottomSheet
+        visible={showPhotoPicker}
+        onClose={() => setShowPhotoPicker(false)}
+        photos={availablePhotos}
+        onPhotoSelect={handlePhotoSelect}
       />
     </GestureHandlerRootView>
   );

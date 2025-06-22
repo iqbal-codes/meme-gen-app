@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
     borderTopLeftRadius: RADIUS.lg,
     borderTopRightRadius: RADIUS.lg,
-    paddingBottom: SPACING.xl + 20, // Extra padding for bottom safe area
   },
   header: {
     flexDirection: 'row',

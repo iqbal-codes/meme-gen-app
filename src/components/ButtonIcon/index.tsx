@@ -1,6 +1,5 @@
 import React from 'react';
 import { TouchableOpacity, View, StyleProp, ViewStyle } from 'react-native';
-import { COLORS } from '../../constants/theme';
 import styles from './styles';
 
 export type ButtonIconVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';

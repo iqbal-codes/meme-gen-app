@@ -1,15 +1,24 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SPACING, FONT, RADIUS, SCREEN_WIDTH } from '../../constants/theme';
+import { COLORS, SPACING, FONT, RADIUS } from '../../constants/theme';
+import { calculateFlatListItemWidth } from '../../libs/styleUtils';
+
+const imageWidth = calculateFlatListItemWidth({ numColumns: 2, containerPadding: SPACING[3], gap: SPACING[2] });
 
 const styles = StyleSheet.create({
+  container: {
+    padding: SPACING[3],
+    gap: SPACING[2],
+  },
+  columnWrapper: {
+    gap: SPACING[2],
+  },
   imageGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
   },
   imageOption: {
-    width: '48%', // 2 columns with some spacing
-    marginBottom: SPACING.md,
+    width: imageWidth,
     borderRadius: RADIUS.md,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -18,7 +27,7 @@ const styles = StyleSheet.create({
   },
   templateImage: {
     width: '100%',
-    height: (SCREEN_WIDTH - SPACING[16]) / 2,
+    height: imageWidth,
     backgroundColor: COLORS.muted,
   },
   templateName: {

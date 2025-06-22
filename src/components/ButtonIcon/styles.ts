@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, RADIUS, SPACING } from '../../constants/theme';
-import { createShadow } from '../../libs/shadowUtils';
 import { states } from '../../libs/styleUtils';
 
 export default StyleSheet.create({
@@ -20,9 +19,9 @@ export default StyleSheet.create({
     backgroundColor: COLORS.secondary,
   },
   outlineButton: {
-    backgroundColor: 'transparent',
+    backgroundColor: COLORS.background,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: COLORS.primary,
   },
   ghostButton: {
     backgroundColor: 'transparent',

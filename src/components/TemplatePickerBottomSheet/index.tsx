@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Alert } from 'react-native';
+import { View, Text, TouchableOpacity, Image, Alert, FlatList } from 'react-native';
 import BaseBottomSheet from '../BaseBottomSheet';
 import styles from './styles';
 import { MEME_TEMPLATES } from '../../constants/memeTemplates';
 import ButtonIcon from '../ButtonIcon';
 import { X } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
+import { MemeTemplate } from '../../types';
 
 interface ImageSelectionBottomSheetProps {
   visible: boolean;
@@ -24,7 +25,7 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
     if (hasUnsavedChanges) {
       Alert.alert(
         'Unsaved Changes',
-        'Changing the background image will clear all text elements. Are you sure you want to continue?',
+        'Changing the background image will clear all elements. Are you sure you want to continue?',
         [
           {
             text: 'Cancel',
@@ -46,29 +47,33 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
     }
   };
 
+  const renderItem = ({ item }: { item: MemeTemplate }) => (
+    <TouchableOpacity style={styles.imageOption} onPress={() => handleImageSelect(item.imageUrl)}>
+      <Image source={{ uri: item.imageUrl }} style={styles.templateImage} resizeMode="cover" />
+      <Text style={styles.templateName} numberOfLines={2}>
+        {item.name}
+      </Text>
+    </TouchableOpacity>
+  );
+
   return (
     <BaseBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Background Image"
-      headerAction={<ButtonIcon variant='ghost' icon={<X color={COLORS.primary} />} onPress={onClose} />}
+      title="Select Meme Template"
+      headerAction={<ButtonIcon variant="ghost" icon={<X color={COLORS.primary} />} onPress={onClose} />}
       maxHeight="70%"
       minHeight="50%"
     >
-            <View style={styles.imageGrid}>
-              {MEME_TEMPLATES.map((template, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.imageOption}
-                  onPress={() => handleImageSelect(template.imageUrl)}
-                >
-                  <Image source={{ uri: template.imageUrl }} style={styles.templateImage} resizeMode="cover" />
-                  <Text style={styles.templateName} numberOfLines={2}>
-                    {template.name}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
+      <FlatList
+        data={MEME_TEMPLATES}
+        numColumns={2}
+        keyExtractor={(_, index) => index.toString()}
+        contentContainerStyle={styles.container}
+        columnWrapperStyle={styles.columnWrapper}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+      />
     </BaseBottomSheet>
   );
 };

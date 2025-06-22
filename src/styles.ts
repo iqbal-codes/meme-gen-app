@@ -3,7 +3,7 @@ import { COLORS, SPACING } from './constants/theme';
 import { createShadow } from './libs/shadowUtils';
 
 export default StyleSheet.create({
-  rootContainer: { flex: 1, height: '100%', backgroundColor: '#e5e5e5' },
+  rootContainer: { flex: 1, height: '100%', backgroundColor: COLORS.muted },
   container: {
     flex: 1,
   },
@@ -19,7 +19,7 @@ export default StyleSheet.create({
     backgroundColor: '#ffffff', // Add background color
     overflow: Platform.OS === 'android' ? 'visible' : 'hidden', // Different overflow settings per platform
     // Shadow for iOS
-    ...createShadow({ size: 'md' }),
+    ...createShadow({ size: 'lg' }),
   },
   canvasImage: {
     width: '100%', // Match the border radius of the parent
@@ -29,7 +29,13 @@ export default StyleSheet.create({
   controls: {
     padding: SPACING.md,
     width: '100%',
-    gap: SPACING.sm,
+    gap: SPACING.md,
+    display: 'flex',
+    flexDirection: 'row',
+    backgroundColor: COLORS.background,
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    ...createShadow({ size: 'lg' }),
   },
   verticalLine: {
     position: 'absolute',
