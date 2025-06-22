@@ -23,7 +23,7 @@ export default StyleSheet.create({
     boxShadow: BOX_SHADOWS.md,
   },
   secondaryButton: {
-    backgroundColor: COLORS.secondary,
+    backgroundColor: COLORS.background,
     boxShadow: BOX_SHADOWS.md,
   },
   outlineButton: {

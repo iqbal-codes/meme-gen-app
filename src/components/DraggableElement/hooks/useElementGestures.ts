@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
 import {
   useSharedValue,
@@ -11,8 +11,6 @@ interface UseElementGesturesProps {
   element: CanvasElement;
   isEditing: boolean;
   isSelecting: boolean;
-  canvasWidth: number;
-  canvasHeight: number;
   elementDimensions?: { width: number; height: number };
   onDragStart: () => void;
   onDragEnd: (position?: { x: number; y: number }) => void;
@@ -22,8 +20,14 @@ interface UseElementGesturesProps {
   onUpdateElement?: (element: CanvasElement) => void;
 }
 
-// Threshold for snapping to center and edges (in pixels)
+// Constants
 const SNAP_THRESHOLD = 5;
+const ROTATION_THRESHOLD = 5;
+const MIN_SCALE = 0.5;
+const MAX_SCALE = 3.0;
+const DEFAULT_ELEMENT_WIDTH = 100;
+const DEFAULT_ELEMENT_HEIGHT = 36;
+const SNAP_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
 
 const useElementGestures = ({
   element,
@@ -50,51 +54,73 @@ const useElementGestures = ({
   const savedRotation = useSharedValue(0);
   const savedScale = useSharedValue(1);
 
-  // Enhanced snapping function that considers actual element dimensions
-  const applySnapping = (newX: number, newY: number) => {
+  // Helper function for position snapping
+  const applyPositionSnapping = (newX: number, newY: number) => {
     'worklet';
 
-    const elementWidth = (elementDimensions?.width || 100) * scale.value;
-    const elementHeight = (elementDimensions?.height || 36) * scale.value;
+    const elementWidth = (elementDimensions?.width || DEFAULT_ELEMENT_WIDTH) * scale.value;
+    const elementHeight = (elementDimensions?.height || DEFAULT_ELEMENT_HEIGHT) * scale.value;
 
-    // Calculate element edges based on center position
+    // Calculate element edges
     const elementLeft = newX - elementWidth / 2;
     const elementRight = newX + elementWidth / 2;
     const elementTop = newY - elementHeight / 2;
     const elementBottom = newY + elementHeight / 2;
 
-    // Guide lines (center only)
+    // Center guide lines
     const centerX = 0;
     const centerY = 0;
 
     let finalX = newX;
     let finalY = newY;
 
-    // Horizontal snapping - snap element edges to vertical center line
+    // Horizontal snapping to vertical center line
     if (Math.abs(elementLeft - centerX) <= SNAP_THRESHOLD) {
-      // Snap left edge to center
       finalX = centerX + elementWidth / 2;
     } else if (Math.abs(elementRight - centerX) <= SNAP_THRESHOLD) {
-      // Snap right edge to center
       finalX = centerX - elementWidth / 2;
     } else if (Math.abs(newX - centerX) <= SNAP_THRESHOLD) {
-      // Snap element center to center
       finalX = centerX;
     }
 
-    // Vertical snapping - snap element edges to horizontal center line
+    // Vertical snapping to horizontal center line
     if (Math.abs(elementTop - centerY) <= SNAP_THRESHOLD) {
-      // Snap top edge to center
       finalY = centerY + elementHeight / 2;
     } else if (Math.abs(elementBottom - centerY) <= SNAP_THRESHOLD) {
-      // Snap bottom edge to center
       finalY = centerY - elementHeight / 2;
     } else if (Math.abs(newY - centerY) <= SNAP_THRESHOLD) {
-      // Snap element center to center
       finalY = centerY;
     }
 
     return { x: finalX, y: finalY };
+  };
+
+  // Helper function for rotation snapping
+  const applyRotationSnapping = (newRotation: number) => {
+    'worklet';
+    
+    const degrees = (newRotation * 180) / Math.PI;
+    const normalizedDegrees = ((degrees % 360) + 360) % 360;
+
+    // Find closest snap angle
+    for (const angle of SNAP_ANGLES) {
+      if (Math.abs(normalizedDegrees - angle) <= ROTATION_THRESHOLD) {
+        return (angle * Math.PI) / 180;
+      }
+    }
+
+    // Check for 360° wrap-around
+    if (normalizedDegrees > 360 - ROTATION_THRESHOLD) {
+      return 0;
+    }
+
+    return newRotation;
+  };
+
+  // Helper function for scale constraints
+  const applyScaleConstraints = (newScale: number) => {
+    'worklet';
+    return Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
   };
 
   // Update element with transform changes
@@ -104,12 +130,20 @@ const useElementGestures = ({
         ...element,
         x: translateX.value,
         y: translateY.value,
-        // Store scale in element for persistence
         scale: scale.value,
       };
       onUpdateElement(updatedElement);
     }
-  }, [element, onUpdateElement]);
+  }, [element, onUpdateElement, translateX, translateY, scale]);
+
+  // Shared transform callback
+  const handleTransformEnd = useCallback(() => {
+    'worklet';
+    if (onTransform) {
+      runOnJS(onTransform)({ scale: scale.value, rotation: rotation.value });
+    }
+    runOnJS(updateElementTransform)();
+  }, [onTransform, updateElementTransform, scale, rotation]);
 
   // Pan gesture for dragging
   const panGesture = Gesture.Pan()
@@ -126,13 +160,10 @@ const useElementGestures = ({
     })
     .onUpdate(event => {
       'worklet';
-      // Calculate new position
       const newX = event.translationX + offsetX.value;
       const newY = event.translationY + offsetY.value;
-
-      // Apply enhanced snapping with actual element dimensions
-      const snappedPosition = applySnapping(newX, newY);
-
+      const snappedPosition = applyPositionSnapping(newX, newY);
+      
       translateX.value = snappedPosition.x;
       translateY.value = snappedPosition.y;
     })
@@ -156,45 +187,9 @@ const useElementGestures = ({
     .onUpdate(event => {
       'worklet';
       const newRotation = savedRotation.value + event.rotation;
-      const degrees = (newRotation * 180) / Math.PI;
-      const snapAngles = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-      const threshold = 5;
-      const normalizedDegrees = ((degrees % 360) + 360) % 360;
-
-      let shouldSnap = false;
-      let snapToDegree = normalizedDegrees;
-
-      for (const angle of snapAngles) {
-        if (Math.abs(normalizedDegrees - angle) <= threshold) {
-          shouldSnap = true;
-          snapToDegree = angle;
-          break;
-        }
-        if (angle === 0 && normalizedDegrees > 360 - threshold) {
-          shouldSnap = true;
-          snapToDegree = 0;
-          break;
-        }
-        if (angle === 360 && normalizedDegrees < threshold) {
-          shouldSnap = true;
-          snapToDegree = 0;
-          break;
-        }
-      }
-
-      if (shouldSnap) {
-        rotation.value = (snapToDegree * Math.PI) / 180;
-      } else {
-        rotation.value = newRotation;
-      }
+      rotation.value = applyRotationSnapping(newRotation);
     })
-    .onEnd(() => {
-      'worklet';
-      if (onTransform) {
-        runOnJS(onTransform)({ scale: scale.value, rotation: rotation.value });
-      }
-      runOnJS(updateElementTransform)();
-    });
+    .onEnd(handleTransformEnd);
 
   // Pinch gesture for scaling
   const pinchGesture = Gesture.Pinch()
@@ -205,32 +200,19 @@ const useElementGestures = ({
     })
     .onUpdate(event => {
       'worklet';
-      // Apply scale with min/max limits
       const newScale = savedScale.value * event.scale;
-      const minScale = 0.5;
-      const maxScale = 3.0;
-
-      scale.value = Math.max(minScale, Math.min(maxScale, newScale));
+      scale.value = applyScaleConstraints(newScale);
     })
-    .onEnd(() => {
-      'worklet';
-      if (onTransform) {
-        runOnJS(onTransform)({ scale: scale.value, rotation: rotation.value });
-      }
-      runOnJS(updateElementTransform)();
-    });
+    .onEnd(handleTransformEnd);
 
   // Tap gesture for selection and editing
   const tapGesture = Gesture.Tap()
     .runOnJS(true)
     .numberOfTaps(1)
     .onStart(() => {
-      console.log('Element tapped:', element.id);
       if (isSelecting) {
-        // If already selected, enter edit mode on second tap
         onEdit(element.id);
       } else {
-        // First tap selects the element
         onSelect(element.id);
       }
     });
@@ -240,7 +222,6 @@ const useElementGestures = ({
     .runOnJS(true)
     .numberOfTaps(2)
     .onStart(() => {
-      console.log('Element double tapped:', element.id);
       onEdit(element.id);
     });
 
@@ -267,7 +248,6 @@ const useElementGestures = ({
   return {
     combinedGesture,
     animatedStyle,
-    // Expose animated values if needed
     translateX,
     translateY,
     rotation,

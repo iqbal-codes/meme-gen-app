@@ -11,15 +11,7 @@ import {
 } from 'react-native';
 import styles from './styles';
 import { COLORS, RADIUS } from '../../constants/theme';
-
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'outline'
-  | 'ghost'
-  | 'danger';
-export type ButtonSize = 'small' | 'medium' | 'large';
-export type ButtonRounded = 'none' | 'sm' | 'md' | 'lg' | 'xl' | 'full';
+import { ButtonVariant, ButtonSize, ButtonRounded } from '../../types';
 
 export interface ButtonProps {
   onPress?: (e: GestureResponderEvent) => void;

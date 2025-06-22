@@ -1,25 +1,10 @@
-import { TextStyle } from "../components/TextStyleBottomSheet";
-
-export type CanvasElement = {
-  id: string;
-  type: 'text' | 'image';
-  text?: string; // Optional for image elements
-  imageUri?: string; // For image elements
-  x: number;
-  y: number;
-  width?: number; // For image elements
-  height?: number; // For image elements
-  style?: TextStyle; // Optional for image elements
-  scale?: number;
-}
-
+// Keep template type here as it's simple
 export type MemeTemplate = {
   name: string;
   imageUrl: string;
-}
-
-// For the gesture handler context
-export type PanGestureContext = {
-  startX: number;
-  startY: number;
 };
+
+// Re-export all types for easy importing
+export * from './elements';
+export * from './ui';
+export * from './gestures';

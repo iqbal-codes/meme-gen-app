@@ -18,24 +18,24 @@ import Animated, {
 } from 'react-native-reanimated';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { DraggableElement } from './components';
+import { DraggableElement, ElementStyleBottomSheet } from './components';
 import styles from './styles';
-import { CanvasElement } from './types';
+import {
+  CanvasElement,
+  ElementStyle,
+} from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, SCREEN_WIDTH, SIZING } from './constants/theme';
 import Button from './components/Button';
 import {
-  TextStyleBottomSheet,
   TemplatePickerBottomSheet,
   PhotoPickerBottomSheet,
 } from './components';
-import { TextStyle } from './components/TextStyleBottomSheet';
 import useImageHeight from './hooks/useImageHeight';
 import {
   Images,
   Save,
   Type,
-  Edit,
   Copy,
   Trash2,
   Paintbrush,
@@ -51,7 +51,7 @@ const App = () => {
   const [showGuideLines, setShowGuideLines] = useState(false);
   const [selectedId, setSelectedId] = useState<string | undefined>(undefined);
   const [editingId, setEditingId] = useState<string | undefined>(undefined);
-  const [showStyleSheet, setShowStyleSheet] = useState(false);
+  const [showStyleElement, setShowStyleElement] = useState(false);
   const [showImageSelection, setShowImageSelection] = useState(false);
   const [showPhotoPicker, setShowPhotoPicker] = useState(false);
   const [availablePhotos, setAvailablePhotos] = useState<any[]>([]);
@@ -88,7 +88,8 @@ const App = () => {
   };
 
   // Function to handle drag start
-  const onDragStart = () => {
+  const onDragStart = (id: string) => {
+    setSelectedId(id);
     setShowGuideLines(true); // Show guide lines when dragging starts
   };
 
@@ -109,7 +110,7 @@ const App = () => {
   };
 
   // Function to update text style
-  const onUpdateTextStyle = (elementId: string, newStyle: TextStyle) => {
+  const onUpdateElementStyle = (elementId: string, newStyle: ElementStyle) => {
     setElements(prev => ({
       ...prev,
       [elementId]: { ...prev[elementId], style: newStyle },
@@ -140,6 +141,7 @@ const App = () => {
       x: 0,
       y: 0,
       style: {
+        opacity: 1,
         color: '#000000',
         fontWeight: 'normal',
         fontStyle: 'normal',
@@ -408,15 +410,13 @@ const App = () => {
                         <View style={styles.horizontalLine} />
                       </>
                     )}
-                    {(Object.values(elements) || []).map(el => (
+                    {Object.values(elements).map(el => (
                       <DraggableElement
                         key={el.id}
                         element={el}
                         onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
-                        onDragStart={onDragStart}
+                        onDragStart={() => onDragStart(el.id)}
                         onUpdateText={newText => onUpdateText(el.id, newText)}
-                        canvasWidth={CANVAS_WIDTH}
-                        canvasHeight={imageHeight}
                         onEdit={() => setEditingId(el.id)}
                         onSelect={() => setSelectedId(el.id)}
                         isSelecting={selectedId === el.id}
@@ -454,7 +454,7 @@ const App = () => {
                 size="large"
                 variant="primary"
                 icon={<Paintbrush color={COLORS.accent} size={20} />}
-                onPress={() => setShowStyleSheet(true)}
+                onPress={() => setShowStyleElement(true)}
               />
               <Button
                 rounded="full"
@@ -511,15 +511,15 @@ const App = () => {
       </SafeAreaView>
 
       {/* Text Style Bottom Sheet */}
-      <TextStyleBottomSheet
-        visible={showStyleSheet}
-        onClose={() => setShowStyleSheet(false)}
-        currentStyle={
-          selectedId && elements[selectedId]
-            ? elements[selectedId].style
-            : undefined
-        }
-        onStyleChange={style => onUpdateTextStyle(selectedId!, style)}
+      <ElementStyleBottomSheet
+        visible={showStyleElement}
+        onClose={() => setShowStyleElement(false)}
+        element={elements[selectedId!]}
+        onStyleChange={style => {
+          if (selectedId) {
+            onUpdateElementStyle(selectedId, style);
+          }
+        }}
       />
 
       {/* Template Picker Bottom Sheet */}

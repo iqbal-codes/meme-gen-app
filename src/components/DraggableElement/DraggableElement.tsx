@@ -1,11 +1,19 @@
 import React, { useRef, useCallback, useState, useLayoutEffect } from 'react';
-import { Image, Text, TextInput, View, TextStyle, GestureResponderEvent } from 'react-native';
+import {
+  Image,
+  Text,
+  TextInput,
+  View,
+  TextStyle,
+  GestureResponderEvent,
+} from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import { CanvasElement } from '../../types';
 import { SCREEN_WIDTH, SIZING } from '../../constants/theme';
 import useElementGestures from './hooks/useElementGestures';
 import styles from './styles';
+import { useElementDimensions } from '../../hooks/useElementDimensions';
 
 interface DraggableElementProps {
   element: CanvasElement;
@@ -29,63 +37,25 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
   onDragEnd,
   onDragStart,
   onUpdateText,
-  onUpdateImage,
   onEdit,
   onTransform,
   onUpdateElement,
-  canvasWidth = SCREEN_WIDTH - SIZING.md * 2,
-  canvasHeight = 400,
   isSelecting,
   onSelect,
 }) => {
   const elementRef = useRef<View>(null);
-  const [elementDimensions, setElementDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  // Measure element dimensions using React Native's measure method
-  const measureElement = useCallback(() => {
-    if (elementRef.current) {
-      elementRef.current.measure((x, y, width, height, pageX, pageY) => {
-        const newDimensions = { width, height };
-        setElementDimensions(newDimensions);
-        
-        // Update the element with actual measured dimensions
-        if (onUpdateElement && (element.width !== width || element.height !== height)) {
-          onUpdateElement({ ...element, width, height });
-        }
-      });
-    }
-  }, [element, onUpdateElement]);
-
-  // Measure on layout changes and when text content changes
-  useLayoutEffect(() => {
-    // Small delay to ensure the layout is complete
-    const timer = setTimeout(measureElement, 0);
-    return () => clearTimeout(timer);
-  }, [measureElement, element.text, element.style]);
-
-  // Use measured dimensions or fallback to element dimensions
-  const currentDimensions = {
-    width:
-      elementDimensions?.width ||
-      element.width ||
-      (element.type === 'text' ? 100 : 150),
-    height:
-      elementDimensions?.height ||
-      element.height ||
-      (element.type === 'text' ? 36 : 150),
-  };
+  // Use the new dimension hook
+  const { dimensions, onLayout } = useElementDimensions({
+    element,
+    autoMeasure: true,
+  });
 
   // Use unified gesture hook
   const { combinedGesture, animatedStyle } = useElementGestures({
     element,
     isEditing,
     isSelecting,
-    canvasWidth,
-    canvasHeight,
-    elementDimensions: currentDimensions,
+    elementDimensions: dimensions,
     onDragStart,
     onDragEnd,
     onEdit,
@@ -110,7 +80,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
             multiline
             autoFocus
             onBlur={() => onEdit()}
-            onLayout={measureElement}
+            onLayout={onLayout}
           />
         );
 
@@ -121,7 +91,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
             isSelecting && styles.bordered,
             element.style as TextStyle,
           ]}
-          onLayout={measureElement}
+          onLayout={onLayout}
         >
           {element.text}
         </Text>
@@ -135,16 +105,17 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
               {
                 width: element.width || 150,
                 height: element.height || 150,
+                opacity: element.style?.opacity,
               },
             ]}
             resizeMode="cover"
-            onLayout={measureElement}
+            onLayout={onLayout}
           />
         </View>
       );
     }
     return null;
-  }, [element, isEditing, isSelecting, measureElement]);
+  }, [element, isEditing, isSelecting, onLayout]);
 
   return (
     <GestureDetector gesture={combinedGesture}>
