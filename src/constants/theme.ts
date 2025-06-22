@@ -39,7 +39,7 @@ export const COLORS = {
   success: '#22c55e',
   warning: '#f59e0b',
   info: '#3b82f6',
-  
+
   // text colors
   text: '#18181b',
   textForeground: '#ffffff',
@@ -56,7 +56,7 @@ export const RADIUS = {
 };
 
 // Spacing scale
-export const SPACING = {
+export const SIZING = {
   0: 0,
   1: 4,
   2: 8,
@@ -112,36 +112,14 @@ export const FONT = {
   },
 };
 
-// Shadows
-export const SHADOWS = {
-  sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 4,
-  },
-  xl: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
-    elevation: 8,
-  },
+// Modern boxShadow definitions (CSS-compliant)
+export const BOX_SHADOWS = {
+  none: '0 0 0 0 rgba(0, 0, 0, 0)',
+  sm: '0px 0px 4px 0px rgba(0,0,0,0.3)',
+  md: '0px 0px 8px 1px rgba(0,0,0,0.3)',
+  lg: '0px 0px 12px 2px rgba(0,0,0,0.3)',
+  xl: '0 18px 3px 0 rgba(0, 0, 0, 0.3)',
+  inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.1)',
 };
 
 // Screen dimensions

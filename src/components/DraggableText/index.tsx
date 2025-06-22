@@ -1,14 +1,10 @@
 // DraggableText.js
-import React, { useState } from 'react';
-import { TextInput, Text, View, TouchableOpacity, StyleProp, TextStyle as RNTextStyle } from 'react-native';
+import React from 'react';
+import { TextInput, Text, StyleProp, TextStyle as RNTextStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
 import styles from './styles.ts';
-import { COLORS, FONT, SCREEN_WIDTH, SPACING } from '../../constants/theme';
-import Button from '../Button';
-import TextStyleBottomSheet, { TextStyle } from '../TextStyleBottomSheet';
-import { Edit, Trash } from 'lucide-react-native';
-import ButtonIcon from '../ButtonIcon/index.tsx';
+import { SCREEN_WIDTH, SIZING } from '../../constants/theme';
 import { CanvasElement } from '../../types/index.ts';
 
 interface DraggableTextProps {
@@ -38,7 +34,7 @@ const DraggableText = ({
   onUpdateText,
   onEdit,
   onTransform,
-  canvasWidth = SCREEN_WIDTH - SPACING.md * 2, // Default to screen width minus padding
+  canvasWidth = SCREEN_WIDTH - SIZING.md * 2, // Default to screen width minus padding
   canvasHeight = 400,
   isSelecting,
   onSelect,
@@ -86,7 +82,8 @@ const DraggableText = ({
     .onTouchesDown(() => {
       // Trigger guide lines when drag starts
       onDragStart();
-    }).onTouchesUp(() => {
+    })
+    .onTouchesUp(() => {
       onDragEnd();
     })
     .onUpdate(event => {

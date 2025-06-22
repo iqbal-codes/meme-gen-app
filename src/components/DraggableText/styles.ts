@@ -1,6 +1,5 @@
-import { StyleSheet, TextStyle } from 'react-native';
-import { SPACING, FONT, COLORS, NO_PADDING } from '../../constants/theme';
-import { createShadow } from '../../libs/shadowUtils';
+import { StyleSheet } from 'react-native';
+import { FONT, COLORS, NO_PADDING } from '../../constants/theme';
 
 export default StyleSheet.create({
   draggable: {

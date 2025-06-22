@@ -1,21 +1,39 @@
 // App.js
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { View, ImageBackground, Image, Platform, PermissionsAndroid } from 'react-native';
-import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import React, { useState, useRef } from 'react';
+import {
+  View,
+  ImageBackground,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
+import {
+  GestureHandlerRootView,
+  Gesture,
+  GestureDetector,
+} from 'react-native-gesture-handler';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 import ViewShot from 'react-native-view-shot';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { ButtonIcon, DraggableElement } from './components';
+import { DraggableElement } from './components';
 import styles from './styles';
 import { CanvasElement } from './types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, SCREEN_WIDTH, SPACING } from './constants/theme';
+import { COLORS, SCREEN_WIDTH, SIZING } from './constants/theme';
 import Button from './components/Button';
-import { TextStyleBottomSheet, TemplatePickerBottomSheet, PhotoPickerBottomSheet } from './components';
+import {
+  TextStyleBottomSheet,
+  TemplatePickerBottomSheet,
+  PhotoPickerBottomSheet,
+} from './components';
 import { TextStyle } from './components/TextStyleBottomSheet';
 import useImageHeight from './hooks/useImageHeight';
-import { Download, Images, Type } from 'lucide-react-native';
+import { Images, Save, Type, Edit, Copy, Trash2, Paintbrush } from 'lucide-react-native';
 // We will create this component in the next step
+
+const CANVAS_WIDTH = SCREEN_WIDTH - SIZING.md * 2;
 
 const App = () => {
   const drakeTemplate = require('./assets/drake.jpg'); // Default template
@@ -46,10 +64,16 @@ const App = () => {
   const contextY = useSharedValue(0);
 
   // Function to update element position in state after dragging stops
-  const onDragEnd = (elementId: string, newPosition?: { x: number; y: number }) => {
+  const onDragEnd = (
+    elementId: string,
+    newPosition?: { x: number; y: number },
+  ) => {
     console.log(elementId, newPosition);
     if (newPosition) {
-      setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], x: newPosition.x, y: newPosition.y } }));
+      setElements(prev => ({
+        ...prev,
+        [elementId]: { ...prev[elementId], x: newPosition.x, y: newPosition.y },
+      }));
     }
     setShowGuideLines(false); // Hide guide lines when dragging ends
   };
@@ -61,21 +85,31 @@ const App = () => {
 
   // Function to update text content
   const onUpdateText = (elementId: string, newText: string) => {
-    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], text: newText } }));
+    setElements(prev => ({
+      ...prev,
+      [elementId]: { ...prev[elementId], text: newText },
+    }));
   };
 
   // Function to update image content
   const onUpdateImage = (elementId: string, newImageUri: string) => {
-    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], imageUri: newImageUri } }));
+    setElements(prev => ({
+      ...prev,
+      [elementId]: { ...prev[elementId], imageUri: newImageUri },
+    }));
   };
 
   // Function to update text style
   const onUpdateTextStyle = (elementId: string, newStyle: TextStyle) => {
-    setElements(prev => ({ ...prev, [elementId]: { ...prev[elementId], style: newStyle } }));
+    setElements(prev => ({
+      ...prev,
+      [elementId]: { ...prev[elementId], style: newStyle },
+    }));
   };
 
   // Function to delete an element
   const onDeleteElement = (elementId: string) => {
+    console.log('masuk sini');
     const tempResult = { ...elements };
     delete tempResult[elementId];
     setElements(tempResult);
@@ -128,14 +162,20 @@ const App = () => {
     const getCheckPermissionPromise = async () => {
       if (Number(Platform.Version) >= 33) {
         return Promise.all([
-          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
-          PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+          ),
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+          ),
         ]).then(
           ([hasReadMediaImagesPermission, hasReadMediaVideoPermission]) =>
             hasReadMediaImagesPermission && hasReadMediaVideoPermission,
         );
       } else {
-        return PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+        return PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        );
       }
     };
 
@@ -151,13 +191,15 @@ const App = () => {
           PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
         ]).then(
           statuses =>
-            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] === PermissionsAndroid.RESULTS.GRANTED &&
-            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] === PermissionsAndroid.RESULTS.GRANTED,
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+              PermissionsAndroid.RESULTS.GRANTED &&
+            statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+              PermissionsAndroid.RESULTS.GRANTED,
         );
       } else {
-        return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE).then(
-          status => status === PermissionsAndroid.RESULTS.GRANTED,
-        );
+        return PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        ).then(status => status === PermissionsAndroid.RESULTS.GRANTED);
       }
     };
 
@@ -208,7 +250,6 @@ const App = () => {
     .numberOfTaps(2)
     .onStart(() => {
       'worklet';
-      console.log('masuk sini 2');
       scale.value = 1; // Reset zoom to original size
       translateX.value = 0; // Reset pan position
       translateY.value = 0;
@@ -251,67 +292,194 @@ const App = () => {
         const maxPanY = (scale.value - 1) * 200; // Adjust this value based on your canvas size
 
         // Apply pan with limits
-        translateX.value = Math.min(Math.max(contextX.value + event.translationX, -maxPanX), maxPanX);
-        translateY.value = Math.min(Math.max(contextY.value + event.translationY, -maxPanY), maxPanY);
+        translateX.value = Math.min(
+          Math.max(contextX.value + event.translationX, -maxPanX),
+          maxPanX,
+        );
+        translateY.value = Math.min(
+          Math.max(contextY.value + event.translationY, -maxPanY),
+          maxPanY,
+        );
       }
     });
 
   // Animated style for the canvas container
   const animatedCanvasStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { scale: scale.value }],
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { scale: scale.value },
+      ],
     };
   });
+
+  // Function to handle copy element
+  const onCopyElement = (elementId: string) => {
+    const elementToCopy = elements[elementId];
+    if (elementToCopy) {
+      const newElement: CanvasElement = {
+        ...elementToCopy,
+        id: String(Date.now()),
+        x: elementToCopy.x + 20, // Offset the copy slightly
+        y: elementToCopy.y + 20,
+      };
+      setElements(prev => ({ ...prev, [newElement.id]: newElement }));
+      setSelectedId(newElement.id); // Select the new copied element
+    }
+  };
+
+  // Function to handle edit element
+  const onEditElement = (elementId: string) => {
+    const element = elements[elementId];
+    if (element?.type === 'text') {
+      setEditingId(elementId);
+    } else if (element?.type === 'image') {
+      // For images, you might want to open photo picker or image editor
+      // For now, we'll just open the photo picker
+      addImage();
+    }
+  };
 
   return (
     <GestureHandlerRootView style={styles.rootContainer}>
       <SafeAreaView style={styles.container}>
-        {/* The View we will capture */}
-        <GestureDetector gesture={Gesture.Simultaneous(pinchGesture, doubleTapGesture, oneTapGesture, panGesture)}>
-          <ViewShot ref={viewShotRef} options={{ format: 'jpg', quality: 0.9 }} style={styles.canvasContainer}>
-            <Animated.View style={[animatedCanvasStyle]}>
-              <View style={styles.canvas}>
-                <ImageBackground
-                  source={backgroundImage}
-                  style={[{ height: imageHeight, backgroundColor: 'red' }, styles.canvasImage]}
-                  resizeMode="cover"
+        <View style={styles.container}>
+          <GestureDetector
+            gesture={Gesture.Simultaneous(
+              pinchGesture,
+              doubleTapGesture,
+              oneTapGesture,
+              panGesture,
+            )}
+          >
+            <View style={styles.canvasContainer}>
+              <Animated.View style={[animatedCanvasStyle]}>
+                {/* The View we will capture */}
+                <ViewShot
+                  ref={viewShotRef}
+                  options={{ format: 'jpg', quality: 0.9 }}
+                  style={styles.canvas}
                 >
-                  {/* Guide lines for center alignment */}
-                  {showGuideLines && (
-                    <>
-                      {/* Vertical center line */}
-                      <View style={styles.verticalLine} />
-                      {/* Horizontal center line */}
-                      <View style={styles.horizontalLine} />
-                    </>
-                  )}
+                  <ImageBackground
+                    source={backgroundImage}
+                    style={[
+                      { height: imageHeight, backgroundColor: 'red' },
+                      styles.canvasImage,
+                    ]}
+                    resizeMode="cover"
+                  >
+                    {/* Guide lines for center alignment */}
+                    {showGuideLines && (
+                      <>
+                        {/* Vertical center line */}
+                        <View style={styles.verticalLine} />
+                        {/* Horizontal center line */}
+                        <View style={styles.horizontalLine} />
+                      </>
+                    )}
+                    {Object.values(elements).map(el => (
+                      <DraggableElement
+                        key={el.id}
+                        element={el}
+                        onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
+                        onDragStart={onDragStart}
+                        onUpdateText={newText => onUpdateText(el.id, newText)}
+                        onUpdateImage={newImageUri =>
+                          onUpdateImage(el.id, newImageUri)
+                        }
+                        canvasWidth={CANVAS_WIDTH}
+                        canvasHeight={imageHeight}
+                        onEdit={id => setEditingId(id)}
+                        onSelect={id => setSelectedId(id)}
+                        isSelecting={selectedId === el.id}
+                        isEditing={editingId === el.id}
+                      />
+                    ))}
+                  </ImageBackground>
+                </ViewShot>
+              </Animated.View>
+            </View>
+          </GestureDetector>
 
-                  {Object.values(elements).map(el => (
-                    <DraggableElement
-                      key={el.id}
-                      element={el}
-                      onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
-                      onDragStart={onDragStart}
-                      onUpdateText={newText => onUpdateText(el.id, newText)}
-                      onUpdateImage={newImageUri => onUpdateImage(el.id, newImageUri)}
-                      canvasWidth={SCREEN_WIDTH - SPACING.md * 2}
-                      canvasHeight={imageHeight}
-                      onEdit={id => setEditingId(id)}
-                      onSelect={id => setSelectedId(id)}
-                      isSelecting={selectedId === el.id}
-                      isEditing={editingId === el.id}
-                    />
-                  ))}
-                </ImageBackground>
-              </View>
-            </Animated.View>
-          </ViewShot>
-        </GestureDetector>
+          <View style={styles.floatingAddElementContainer}>
+            <Button
+              rounded="full"
+              variant="secondary"
+              icon={<Type color={COLORS.primary} size={20} />}
+              onPress={addText}
+              size='large'
+            />
+            <Button
+              rounded="full"
+              variant="secondary"
+              size='large'
+              icon={<Images color={COLORS.primary} size={20} />}
+              onPress={addImage}
+            />
+          </View>
+          {selectedId && (
+            <View style={styles.floatingEditElementContainer}>
+              {elements[selectedId]?.type === 'text' && (
+                <Button
+                  rounded="full"
+                  size='large'
+                  variant="primary"
+                  icon={<Paintbrush color={COLORS.accent} size={20} />}
+                  onPress={() => onEditElement(selectedId)}
+                />
+              )}
+              <Button
+                rounded="full"
+                variant="secondary"
+                size='large'
+                icon={<Copy color={COLORS.primary} size={20} />}
+                onPress={() => onCopyElement(selectedId)}
+              />
+              <Button
+                rounded="full"
+                size='large'
+                variant="danger"
+                icon={<Trash2 color={COLORS.accent} size={20} />}
+                onPress={() => {
+                  onDeleteElement(selectedId);
+                  setSelectedId(undefined);
+                }}
+              />
+            </View>
+          )}
+        </View>
+        {/* Floating Action Buttons */}
+        {/* Control Buttons */}
         <View style={styles.controls}>
-          <ButtonIcon variant="primary" icon={<Type color={COLORS.accent} />} onPress={addText} />
-          <ButtonIcon variant="primary" icon={<Images color={COLORS.accent} />} onPress={addImage} />
-          <Button variant="primary" title="Background" onPress={() => setShowImageSelection(true)} />
-          {/* <Button variant="primary" title="Save" onPress={onSave} /> */}
+          <View
+            style={{
+              gap: SIZING[3],
+              display: 'flex',
+              flexDirection: 'row',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              rounded="full"
+              variant="primary"
+              title="Background"
+              onPress={() => setShowImageSelection(true)}
+            />
+            <Button
+              rounded="full"
+              variant="primary"
+              title="Clear All"
+              onPress={() => setElements({})}
+            />
+          </View>
+          <Button
+            variant="secondary"
+            title="Save"
+            rounded="full"
+            leftIcon={<Save color={COLORS.primary} size={20} />}
+          />
         </View>
       </SafeAreaView>
 

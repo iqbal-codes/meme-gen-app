@@ -1,7 +1,12 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, RADIUS, SPACING, FONT } from '../../constants/theme';
-import { createShadow } from '../../libs/shadowUtils';
-import { variants, sizes, states } from '../../libs/styleUtils';
+import {
+  COLORS,
+  RADIUS,
+  SIZING,
+  FONT,
+  BOX_SHADOWS,
+} from '../../constants/theme';
+import { states } from '../../libs/styleUtils';
 
 export default StyleSheet.create({
   // Base button style
@@ -11,13 +16,15 @@ export default StyleSheet.create({
     alignItems: 'center',
     borderRadius: RADIUS.md,
   },
-  
+
   // Variants
   primaryButton: {
     backgroundColor: COLORS.primary,
+    boxShadow: BOX_SHADOWS.md,
   },
   secondaryButton: {
     backgroundColor: COLORS.secondary,
+    boxShadow: BOX_SHADOWS.md,
   },
   outlineButton: {
     backgroundColor: COLORS.background,
@@ -29,32 +36,50 @@ export default StyleSheet.create({
   },
   dangerButton: {
     backgroundColor: COLORS.destructive,
+    boxShadow: BOX_SHADOWS.md,
   },
-  
-  // Sizes
+
+  // Regular button sizes
   smallButton: {
-    paddingVertical: SPACING[1],
-    paddingHorizontal: SPACING[3],
+    height: SIZING[8],
+    paddingHorizontal: SIZING[3],
   },
   mediumButton: {
-    paddingVertical: SPACING[2],
-    paddingHorizontal: SPACING[4],
+    height: SIZING[10],
+    paddingHorizontal: SIZING[4],
   },
   largeButton: {
-    paddingVertical: SPACING[3],
-    paddingHorizontal: SPACING[5],
+    height: SIZING[12],
+    paddingHorizontal: SIZING[5],
   },
-  
+
+  // Icon-only button sizes (square)
+  smallIconButton: {
+    width: SIZING[8],
+    height: SIZING[8],
+    aspectRatio: 1,
+  },
+  mediumIconButton: {
+    width: SIZING[10],
+    height: SIZING[10],
+    aspectRatio: 1,
+  },
+  largeIconButton: {
+    width: SIZING[12],
+    height: SIZING[12],
+    aspectRatio: 1,
+  },
+
   // Block
   blockButton: {
     width: '100%',
   },
-  
+
   // Disabled
   disabledButton: {
     ...states.disabled,
   },
-  
+
   // Text styles
   text: {
     fontSize: FONT.sizes.base,
@@ -69,7 +94,6 @@ export default StyleSheet.create({
   },
   outlineText: {
     color: COLORS.foreground,
-
   },
   ghostText: {
     color: COLORS.foreground,
@@ -77,7 +101,7 @@ export default StyleSheet.create({
   dangerText: {
     color: COLORS.destructiveForeground,
   },
-  
+
   // Text sizes
   smallText: {
     fontSize: FONT.sizes.sm,
@@ -88,21 +112,23 @@ export default StyleSheet.create({
   largeText: {
     fontSize: FONT.sizes.lg,
   },
-  
+
   // Disabled text
   disabledText: {
     opacity: 0.8,
   },
-  
-  // Content container
+
+  // Content container for regular buttons
   contentContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: SIZING[2],
   },
-  
-  // Icon container
-  iconContainer: {
-    marginHorizontal: SPACING[1],
+
+  // Icon container for icon-only buttons
+  iconOnlyContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

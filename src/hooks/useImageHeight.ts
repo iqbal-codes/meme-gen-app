@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, ImageURISource } from "react-native";
-import { SCREEN_WIDTH, SPACING } from "../constants/theme";
+import { SCREEN_WIDTH, SIZING } from "../constants/theme";
 
 const useImageHeight = (imageSource: number | ImageURISource) => {
   const [imageHeight, setImageHeight] = useState<number>(0);
@@ -11,7 +11,7 @@ const useImageHeight = (imageSource: number | ImageURISource) => {
       const imageAsset = Image.resolveAssetSource(imageSource);
       if (imageAsset && imageAsset.width && imageAsset.height) {
         const aspectRatio = imageAsset.width / imageAsset.height;
-        const calculatedHeight = (SCREEN_WIDTH - SPACING.md * 2) / aspectRatio;
+        const calculatedHeight = (SCREEN_WIDTH - SIZING.md * 2) / aspectRatio;
         setImageHeight(calculatedHeight);
       }
     } else if (typeof imageSource === 'object' && imageSource.uri) {
@@ -20,7 +20,7 @@ const useImageHeight = (imageSource: number | ImageURISource) => {
         imageSource.uri,
         (width, height) => {
           const aspectRatio = width / height;
-          const calculatedHeight = (SCREEN_WIDTH - SPACING.md * 2) / aspectRatio;
+          const calculatedHeight = (SCREEN_WIDTH - SIZING.md * 2) / aspectRatio;
           setImageHeight(calculatedHeight);
         },
         error => {

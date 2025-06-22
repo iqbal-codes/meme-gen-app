@@ -1,12 +1,19 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, Alert, FlatList } from 'react-native';
+import {
+  Text,
+  TouchableOpacity,
+  Image,
+  Alert,
+  FlatList,
+  Pressable,
+} from 'react-native';
 import BaseBottomSheet from '../BaseBottomSheet';
 import styles from './styles';
 import { MEME_TEMPLATES } from '../../constants/memeTemplates';
-import ButtonIcon from '../ButtonIcon';
 import { X } from 'lucide-react-native';
 import { COLORS } from '../../constants/theme';
 import { MemeTemplate } from '../../types';
+import Button from '../Button';
 
 interface ImageSelectionBottomSheetProps {
   visible: boolean;
@@ -48,20 +55,33 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
   };
 
   const renderItem = ({ item }: { item: MemeTemplate }) => (
-    <TouchableOpacity style={styles.imageOption} onPress={() => handleImageSelect(item.imageUrl)}>
-      <Image source={{ uri: item.imageUrl }} style={styles.templateImage} resizeMode="cover" />
+    <Pressable
+      style={styles.imageOption}
+      onPress={() => handleImageSelect(item.imageUrl)}
+    >
+      <Image
+        source={{ uri: item.imageUrl }}
+        style={styles.templateImage}
+        resizeMode="cover"
+      />
       <Text style={styles.templateName} numberOfLines={2}>
         {item.name}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 
   return (
     <BaseBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Meme Template"
-      headerAction={<ButtonIcon variant="ghost" icon={<X color={COLORS.primary} />} onPress={onClose} />}
+      title="Select Background"
+      headerAction={
+        <Button
+          variant="ghost"
+          icon={<X color={COLORS.primary} />}
+          onPress={onClose}
+        />
+      }
       maxHeight="70%"
       minHeight="50%"
     >

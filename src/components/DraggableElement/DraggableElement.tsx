@@ -1,11 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Image, Text, TextInput, View, TextStyle } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useAnimatedStyle } from 'react-native-reanimated';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+} from 'react-native-reanimated';
 import { CanvasElement } from '../../types';
-import { SCREEN_WIDTH, SPACING } from '../../constants/theme';
-import DraggableText from './DraggableText';
-import DraggableImage from './DraggableImage';
+import { SCREEN_WIDTH, SIZING } from '../../constants/theme';
 import useDragGestures from './hooks/useDragGestures';
 import useSelectionGestures from './hooks/useSelectionGestures';
 import styles from './styles';
@@ -34,7 +35,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
   onUpdateImage,
   onEdit,
   onTransform,
-  canvasWidth = SCREEN_WIDTH - SPACING.md * 2,
+  canvasWidth = SCREEN_WIDTH - SIZING.md * 2,
   canvasHeight = 400,
   isSelecting,
   onSelect,
@@ -66,7 +67,11 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
   });
 
   // Combine gestures
-  const combinedGesture = Gesture.Simultaneous(singleTapGesture, panGesture, rotationGesture);
+  const combinedGesture = Gesture.Simultaneous(
+    singleTapGesture,
+    panGesture,
+    rotationGesture,
+  );
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [
@@ -84,24 +89,43 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
 
   const renderContent = () => {
     if (element.type === 'text') {
+      if (isEditing)
+        return (
+          <TextInput
+            style={[styles.text, styles.bordered, element.style as TextStyle]}
+            value={element.text}
+            onChangeText={onUpdateText}
+            multiline
+            autoFocus
+            onBlur={() => onEdit()}
+          />
+        );
+
       return (
-        <DraggableText
-          element={element}
-          isEditing={isEditing}
-          isSelecting={isSelecting}
-          onUpdateText={onUpdateText!}
-          onEdit={onEdit}
-        />
+        <Text
+          style={[
+            styles.text,
+            isSelecting && styles.bordered,
+            element.style as TextStyle,
+          ]}
+        >
+          {element.text}
+        </Text>
       );
     } else if (element.type === 'image') {
       return (
-        <DraggableImage
-          element={element}
-          isEditing={isEditing}
-          isSelecting={isSelecting}
-          onUpdateImage={onUpdateImage}
-          onEdit={onEdit}
-        />
+        <View style={[styles.imageContainer, isSelecting && styles.bordered]}>
+          <Image
+            source={{ uri: element.imageUri }}
+            style={[
+              {
+                width: element.width || 150,
+                height: element.height || 150,
+              },
+            ]}
+            resizeMode="cover"
+          />
+        </View>
       );
     }
     return null;
@@ -109,11 +133,14 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
 
   return (
     <GestureDetector gesture={combinedGesture}>
-      <Animated.View style={[styles.draggable, animatedStyle]} onTouchStart={handleTouch}>
+      <Animated.View
+        style={[styles.draggable, animatedStyle]}
+        onTouchStart={handleTouch}
+      >
         {renderContent()}
       </Animated.View>
     </GestureDetector>
   );
 };
 
-export default DraggableElement;
+export default React.memo(DraggableElement);

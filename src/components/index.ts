@@ -2,7 +2,6 @@
 
 // Button components
 export { default as Button } from './Button';
-export { default as ButtonIcon } from './ButtonIcon';
 
 // Draggable components
 export { default as DraggableText } from './DraggableText';

@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { COLORS, RADIUS, SPACING, FONT, SCREEN_WIDTH } from '../constants/theme';
+import { COLORS, RADIUS, SIZING, FONT, SCREEN_WIDTH } from '../constants/theme';
 
 // Common variant styles for components
 export const variants = {
@@ -56,26 +56,26 @@ export const sizes = {
   // Button sizes
   button: {
     sm: {
-      paddingVertical: SPACING[1],
-      paddingHorizontal: SPACING[3],
+      paddingVertical: SIZING[1],
+      paddingHorizontal: SIZING[3],
       fontSize: FONT.sizes.sm,
       borderRadius: RADIUS.sm,
     },
     md: {
-      paddingVertical: SPACING[2],
-      paddingHorizontal: SPACING[4],
+      paddingVertical: SIZING[2],
+      paddingHorizontal: SIZING[4],
       fontSize: FONT.sizes.base,
       borderRadius: RADIUS.md,
     },
     lg: {
-      paddingVertical: SPACING[3],
-      paddingHorizontal: SPACING[5],
+      paddingVertical: SIZING[3],
+      paddingHorizontal: SIZING[5],
       fontSize: FONT.sizes.lg,
       borderRadius: RADIUS.md,
     },
     icon: {
-      width: SPACING[10],
-      height: SPACING[10],
+      width: SIZING[10],
+      height: SIZING[10],
       borderRadius: RADIUS.md,
       padding: 0,
     },
@@ -84,20 +84,20 @@ export const sizes = {
   // Input sizes
   input: {
     sm: {
-      height: SPACING[8],
-      paddingHorizontal: SPACING[3],
+      height: SIZING[8],
+      paddingHorizontal: SIZING[3],
       fontSize: FONT.sizes.sm,
       borderRadius: RADIUS.sm,
     },
     md: {
-      height: SPACING[10],
-      paddingHorizontal: SPACING[4],
+      height: SIZING[10],
+      paddingHorizontal: SIZING[4],
       fontSize: FONT.sizes.base,
       borderRadius: RADIUS.md,
     },
     lg: {
-      height: SPACING[12],
-      paddingHorizontal: SPACING[5],
+      height: SIZING[12],
+      paddingHorizontal: SIZING[5],
       fontSize: FONT.sizes.lg,
       borderRadius: RADIUS.md,
     },

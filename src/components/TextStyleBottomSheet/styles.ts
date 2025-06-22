@@ -1,26 +1,26 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SPACING, FONT, RADIUS } from '../../constants/theme';
+import { COLORS, SIZING, FONT, RADIUS } from '../../constants/theme';
 
 const styles = StyleSheet.create({
   section: {
-    marginBottom: SPACING.lg,
+    marginBottom: SIZING.lg,
   },
   sectionTitle: {
     fontSize: FONT.sizes.base,
     fontWeight: FONT.weights.semibold,
     color: COLORS.text,
-    marginBottom: SPACING.sm,
+    marginBottom: SIZING.sm,
   },
   colorGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -SPACING.xs,
+    marginHorizontal: -SIZING.xs,
   },
   colorOption: {
     width: 40,
     height: 40,
     borderRadius: RADIUS.sm,
-    margin: SPACING.xs,
+    margin: SIZING.xs,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
   fontSizeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginHorizontal: -SPACING.xs,
+    marginHorizontal: -SIZING.xs,
   },
   fontSizeOption: {
     width: 50,
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: RADIUS.sm,
-    margin: SPACING.xs,
+    margin: SIZING.xs,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.card,
@@ -54,10 +54,10 @@ const styles = StyleSheet.create({
   },
   buttonRow: {
     flexDirection: 'row',
-    marginHorizontal: -SPACING.xs,
+    marginHorizontal: -SIZING.xs,
   },
   buttonColumn: {
-    marginHorizontal: -SPACING.xs,
+    marginHorizontal: -SIZING.xs,
   },
   styleButton: {
     flex: 1,
@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: RADIUS.sm,
-    margin: SPACING.xs,
+    margin: SIZING.xs,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.card,

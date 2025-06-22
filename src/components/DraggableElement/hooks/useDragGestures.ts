@@ -34,7 +34,6 @@ const useDragGestures = ({
 
   // Pan gesture for dragging (disabled when any element is editing)
   const panGesture = Gesture.Pan()
-    .minDistance(1)
     .enabled(!isEditing)
     .onBegin(() => {
       'worklet';
@@ -50,6 +49,7 @@ const useDragGestures = ({
       onDragStart();
     })
     .onTouchesUp(() => {
+      // Hide guide lines when drag ends
       onDragEnd();
     })
     .onUpdate(event => {

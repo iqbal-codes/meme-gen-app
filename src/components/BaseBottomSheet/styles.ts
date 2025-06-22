@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SPACING, FONT, RADIUS } from '../../constants/theme';
+import { COLORS, SIZING, FONT, RADIUS } from '../../constants/theme';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
+    paddingHorizontal: SIZING.md,
+    paddingVertical: SIZING.sm,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     color: COLORS.foreground,
   },
   content: {
-    padding: SPACING.md,
+    padding: SIZING.md,
   },
 });
 

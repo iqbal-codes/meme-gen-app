@@ -1,22 +1,22 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SPACING } from '../../constants/theme';
+import { COLORS, SIZING } from '../../constants/theme';
 import { calculateFlatListItemWidth } from '../../libs/styleUtils';
 
-const photoSize = calculateFlatListItemWidth({ numColumns: 3, containerPadding: SPACING[3], gap: SPACING[2] });
+const photoSize = calculateFlatListItemWidth({ numColumns: 3, containerPadding: SIZING[3], gap: SIZING[2] });
 
 export default StyleSheet.create({
   columnWrapper: {
-    gap: SPACING[2],
+    gap: SIZING[2],
   },
   container: {
-    gap: SPACING[2],
-    padding: SPACING[3],
+    gap: SIZING[2],
+    padding: SIZING[3],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SPACING[2],
+    marginBottom: SIZING[2],
   },
   title: {
     fontSize: 18,

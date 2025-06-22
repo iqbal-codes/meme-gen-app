@@ -1,9 +1,12 @@
-import { Platform, StyleSheet } from 'react-native';
-import { COLORS, SPACING } from './constants/theme';
-import { createShadow } from './libs/shadowUtils';
+import { StyleSheet, Platform } from 'react-native';
+import { BOX_SHADOWS, COLORS, SIZING } from './constants/theme';
 
 export default StyleSheet.create({
-  rootContainer: { flex: 1, height: '100%', backgroundColor: COLORS.muted },
+  rootContainer: {
+    flex: 1,
+    height: '100%',
+    backgroundColor: COLORS.background,
+  },
   container: {
     flex: 1,
   },
@@ -11,15 +14,14 @@ export default StyleSheet.create({
     flex: 1,
     height: '100%',
     justifyContent: 'center',
-    padding: SPACING.md,
+    padding: SIZING.lg,
     overflow: 'hidden', // Contain the canvas within this container
   },
   canvas: {
     width: '100%',
     backgroundColor: '#ffffff', // Add background color
     overflow: Platform.OS === 'android' ? 'visible' : 'hidden', // Different overflow settings per platform
-    // Shadow for iOS
-    ...createShadow({ size: 'lg' }),
+    boxShadow: BOX_SHADOWS.lg,
   },
   canvasImage: {
     width: '100%', // Match the border radius of the parent
@@ -27,15 +29,15 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   controls: {
-    padding: SPACING.md,
+    padding: SIZING[3],
     width: '100%',
-    gap: SPACING.md,
+    justifyContent: 'space-between',
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: COLORS.background,
+    backgroundColor: 'transparent',
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
-    ...createShadow({ size: 'lg' }),
+    boxShadow: BOX_SHADOWS.xl,
   },
   verticalLine: {
     position: 'absolute',
@@ -59,5 +61,21 @@ export default StyleSheet.create({
     transform: [{ translateY: -0.5 }],
     borderStyle: 'dashed',
     borderBottomWidth: 1,
+  },
+  floatingAddElementContainer: {
+    position: 'absolute',
+    bottom: SIZING.md,
+    left: SIZING.md,
+    flexDirection: 'row',
+    gap: SIZING.md,
+    zIndex: 1000,
+  },
+  floatingEditElementContainer: {
+    position: 'absolute',
+    bottom: SIZING.md,
+    right: SIZING.md,
+    flexDirection: 'row',
+    gap: SIZING.md,
+    zIndex: 1000,
   },
 });

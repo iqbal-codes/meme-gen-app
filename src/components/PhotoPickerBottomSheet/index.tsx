@@ -1,5 +1,12 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, Image, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  FlatList,
+  Pressable,
+} from 'react-native';
 import { X } from 'lucide-react-native';
 import { BaseBottomSheet, Button } from '..';
 import styles from './styles';
@@ -13,17 +20,26 @@ interface PhotoPickerBottomSheetProps {
   onPhotoSelect: (imageUri: string) => void;
 }
 
-const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({ visible, onClose, photos, onPhotoSelect }) => {
+const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
+  visible,
+  onClose,
+  photos,
+  onPhotoSelect,
+}) => {
   const renderPhotoItem = ({ item }: { item: PhotoIdentifier }) => (
-    <TouchableOpacity
+    <Pressable
       style={styles.photoOption}
       onPress={() => {
         onPhotoSelect(item.node.image.uri);
         onClose();
       }}
     >
-      <Image source={{ uri: item.node.image.uri }} style={styles.photoImage} resizeMode="cover" />
-    </TouchableOpacity>
+      <Image
+        source={{ uri: item.node.image.uri }}
+        style={styles.photoImage}
+        resizeMode="cover"
+      />
+    </Pressable>
   );
 
   return (
@@ -32,9 +48,11 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({ visible
       onClose={onClose}
       title="Select Photo"
       headerAction={
-        <TouchableOpacity onPress={onClose}>
-          <X size={24} color={COLORS.mutedForeground} />
-        </TouchableOpacity>
+        <Button
+          variant="ghost"
+          icon={<X color={COLORS.mutedForeground} />}
+          onPress={onClose}
+        />
       }
     >
       <FlatList

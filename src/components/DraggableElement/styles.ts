@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { SPACING, FONT, COLORS, NO_PADDING } from '../../constants/theme';
+import { SIZING, FONT, COLORS, NO_PADDING } from '../../constants/theme';
 
 export default StyleSheet.create({
   draggable: {
@@ -15,9 +15,6 @@ export default StyleSheet.create({
     textAlign: 'center',
     color: COLORS.foreground,
     ...NO_PADDING,
-  },
-  image: {
-    borderRadius: 8,
   },
   bordered: {
     borderWidth: 1,
