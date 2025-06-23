@@ -15,15 +15,15 @@ export const COLORS = {
   primaryForeground: '#ffffff',
 
   // Secondary colors
-  secondary: '#f5f5f5',
+  secondary: '#f0f0f0',
   secondaryForeground: '#18181b',
 
   // Muted colors
-  muted: '#f5f5f5',
+  muted: '#f0f0f0',
   mutedForeground: '#71717a',
 
   // Accent colors
-  accent: '#f5f5f5',
+  accent: '#f0f0f0',
   accentForeground: '#18181b',
 
   // Destructive colors
@@ -48,10 +48,11 @@ export const COLORS = {
 // Radius values
 export const RADIUS = {
   none: 0,
-  sm: 2,
-  md: 4,
-  lg: 8,
-  xl: 12,
+  sm: 4,
+  md: 8,
+  lg: 12,
+  xl: 16,
+  xxl: 24,
   full: 9999,
 };
 

@@ -7,7 +7,7 @@ import {
   FlatList,
   Pressable,
 } from 'react-native';
-import { X } from 'lucide-react-native';
+
 import { BaseBottomSheet, Button } from '..';
 import styles from './styles';
 import { PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
@@ -46,14 +46,7 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
     <BaseBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Photo"
-      headerAction={
-        <Button
-          variant="ghost"
-          icon={<X color={COLORS.mutedForeground} />}
-          onPress={onClose}
-        />
-      }
+      title="Select Image"
     >
       <FlatList
         data={photos}

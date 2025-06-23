@@ -1,19 +1,10 @@
 import React from 'react';
-import {
-  Text,
-  TouchableOpacity,
-  Image,
-  Alert,
-  FlatList,
-  Pressable,
-} from 'react-native';
+import { Text, Image, Alert, FlatList, Pressable } from 'react-native';
 import BaseBottomSheet from '../BaseBottomSheet';
 import styles from './styles';
 import { MEME_TEMPLATES } from '../../constants/memeTemplates';
-import { X } from 'lucide-react-native';
-import { COLORS } from '../../constants/theme';
 import { MemeTemplate } from '../../types';
-import Button from '../Button';
+import { useConfirmation } from '../../contexts';
 
 interface ImageSelectionBottomSheetProps {
   visible: boolean;
@@ -28,26 +19,19 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
   onImageSelect,
   hasUnsavedChanges,
 }) => {
+  const { showConfirmation } = useConfirmation();
+
   const handleImageSelect = (imageUrl: string) => {
     if (hasUnsavedChanges) {
-      Alert.alert(
-        'Unsaved Changes',
-        'Changing the background image will clear all elements. Are you sure you want to continue?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-          {
-            text: 'Continue',
-            style: 'destructive',
-            onPress: () => {
-              onImageSelect(imageUrl);
-              onClose();
-            },
-          },
-        ],
-      );
+      showConfirmation({
+        title: 'Unsaved Changes',
+        message:
+          'Changing the background image will clear all elements. Are you sure you want to continue?',
+        onConfirm: () => {
+          onImageSelect(imageUrl);
+          onClose();
+        },
+      });
     } else {
       onImageSelect(imageUrl);
       onClose();
@@ -75,13 +59,6 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
       visible={visible}
       onClose={onClose}
       title="Select Background"
-      headerAction={
-        <Button
-          variant="ghost"
-          icon={<X color={COLORS.primary} />}
-          onPress={onClose}
-        />
-      }
       maxHeight="70%"
       minHeight="50%"
     >

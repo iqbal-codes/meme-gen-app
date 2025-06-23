@@ -1,5 +1,8 @@
 import React, { ReactNode } from 'react';
 import { View, Text, Modal, Pressable, ScrollView, DimensionValue } from 'react-native';
+import Icons from '@react-native-vector-icons/lucide';
+import Button from '../Button';
+import { COLORS } from '../../constants/theme';
 import styles from './styles';
 
 interface BaseBottomSheetProps {
@@ -21,7 +24,6 @@ const BaseBottomSheet: React.FC<BaseBottomSheetProps> = ({
   children,
   maxHeight = '60%',
   minHeight = '40%',
-  showScrollIndicator = false,
 }) => {
   const bottomSheetStyle = {
     ...styles.bottomSheet,
@@ -36,7 +38,13 @@ const BaseBottomSheet: React.FC<BaseBottomSheetProps> = ({
         <View style={bottomSheetStyle}>
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
-            {headerAction}
+            {headerAction || (
+              <Button
+                variant="ghost"
+                icon={<Icons name="x" color={COLORS.primary} size={24} />}
+                onPress={onClose}
+              />
+            )}
           </View>
           {children}
         </View>

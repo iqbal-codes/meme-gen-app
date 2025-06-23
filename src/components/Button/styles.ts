@@ -6,7 +6,7 @@ import {
   FONT,
   BOX_SHADOWS,
 } from '../../constants/theme';
-import { states } from '../../libs/styleUtils';
+import { states } from '../../utils/styleUtils';
 
 export default StyleSheet.create({
   // Base button style

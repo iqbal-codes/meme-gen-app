@@ -26,7 +26,7 @@ export interface ButtonProps {
   icon?: React.ReactNode; // For icon-only buttons
   iconOnly?: boolean; // Explicitly make it icon-only (square)
   rounded?: ButtonRounded; // Control border radius
-  noShadow?: boolean; // Disable shadow
+  enableShadow?: boolean; // Disable shadow
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
 }
@@ -44,7 +44,7 @@ const Button: React.FC<ButtonProps> = ({
   icon,
   iconOnly = false,
   rounded = 'md',
-  noShadow = false,
+  enableShadow = false,
   style,
   textStyle,
 }) => {
@@ -54,7 +54,9 @@ const Button: React.FC<ButtonProps> = ({
   const getButtonStyle = () => {
     const buttonStyles: StyleProp<ViewStyle> = [
       styles.button,
-      noShadow ? styles[`${variant}ButtonNoShadow`] : styles[`${variant}Button`],
+      enableShadow
+        ? styles[`${variant}Button`]
+        : styles[`${variant}ButtonNoShadow`],
       isIconOnly ? styles[`${size}IconButton`] : styles[`${size}Button`],
       { borderRadius: RADIUS[rounded] }, // Apply rounded prop
     ];

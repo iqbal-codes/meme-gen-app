@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { COLORS, SIZING, FONT, RADIUS } from '../../constants/theme';
-import { calculateFlatListItemWidth } from '../../libs/styleUtils';
+import { calculateFlatListItemWidth } from '../../utils/styleUtils';
 
 const imageWidth = calculateFlatListItemWidth({ numColumns: 2, containerPadding: SIZING[3], gap: SIZING[2] });
 

@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { Image, ImageSourcePropType, ImageURISource } from "react-native";
 import { SCREEN_WIDTH, SIZING } from "../constants/theme";
 
-const useImageHeight = (imageSource: number | ImageURISource) => {
+const useImageHeight = (imageSource?: number | ImageURISource) => {
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   useEffect(() => {
+    if (!imageSource) {
+      return;
+    }
     if (typeof imageSource === 'number') {
       // For static local images (e.g., require('./image.png'))
       const imageAsset = Image.resolveAssetSource(imageSource);

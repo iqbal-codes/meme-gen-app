@@ -5,7 +5,7 @@ import Button from '../Button';
 import BaseBottomSheet from '../BaseBottomSheet';
 import styles from './styles';
 import { ScrollView } from 'react-native-gesture-handler';
-import { Ban, X } from 'lucide-react-native';
+import Icons from '@react-native-vector-icons/lucide';
 import { COLORS } from '../../constants/theme';
 import { CanvasElement, ElementStyle } from '../../types';
 
@@ -114,13 +114,6 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
       visible={visible}
       onClose={handleCancel}
       title={getTitle()}
-      headerAction={
-        <Button
-          variant="ghost"
-          icon={<X color={COLORS.primary} />}
-          onPress={handleCancel}
-        />
-      }
       maxHeight="70%"
     >
       <ScrollView
@@ -157,8 +150,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     key={color}
                     variant={localStyle.color === color ? 'primary' : 'outline'}
                     rounded="full"
-                    iconOnly
-                    noShadow
+                    iconOnly={localStyle.color !== color}
                     style={[
                       styles.colorOption,
                       { backgroundColor: color },
@@ -184,7 +176,6 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     }
                     rounded="full"
                     iconOnly
-                    noShadow
                     style={[
                       styles.colorOption,
                       { backgroundColor: bgColor },
@@ -193,7 +184,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     ]}
                     icon={
                       bgColor === 'transparent' && (
-                        <Ban color={COLORS.destructive} />
+                        <Icons name="ban" size={24} color={COLORS.destructive} />
                       )
                     }
                     onPress={() =>
@@ -218,7 +209,6 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     }
                     title={weight.title}
                     rounded="full"
-                    noShadow
                     textStyle={{
                       fontWeight: weight.value,
                     }}
@@ -244,7 +234,6 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     }
                     title={style.title}
                     rounded="full"
-                    noShadow
                     textStyle={{
                       fontStyle: style.value,
                     }}
@@ -268,7 +257,6 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     }
                     title={decoration.title}
                     rounded="full"
-                    noShadow
                     textStyle={
                       decoration.value !== 'none'
                         ? { textDecorationLine: decoration.value as any }

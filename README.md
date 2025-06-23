@@ -337,8 +337,8 @@ For general React Native issues, see the [official troubleshooting guide](https:
 - [React Native Gesture Handler](https://docs.swmansion.com/react-native-gesture-handler/) - advanced gesture recognition
 - [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/) - high-performance animations
 - [React Native SVG](https://github.com/software-mansion/react-native-svg) - vector graphics
-- [Lucide React Native](https://lucide.dev/guide/packages/lucide-react-native) - beautiful icons
 - [React Native View Shot](https://github.com/gre/react-native-view-shot) - screenshot functionality
+- [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons) - vector icons
 
 ## TypeScript Resources
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/) - comprehensive TypeScript guide

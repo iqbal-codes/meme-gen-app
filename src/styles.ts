@@ -1,5 +1,5 @@
 import { StyleSheet, Platform } from 'react-native';
-import { BOX_SHADOWS, COLORS, SIZING } from './constants/theme';
+import { BOX_SHADOWS, COLORS, RADIUS, SIZING } from './constants/theme';
 
 export default StyleSheet.create({
   rootContainer: {
@@ -14,7 +14,8 @@ export default StyleSheet.create({
     flex: 1,
     height: '100%',
     justifyContent: 'center',
-    padding: SIZING.lg,
+    paddingHorizontal: SIZING[3],
+    paddingBottom: SIZING[16],
     overflow: 'hidden', // Contain the canvas within this container
   },
   canvas: {
@@ -30,14 +31,15 @@ export default StyleSheet.create({
   },
   controls: {
     padding: SIZING[3],
-    width: '100%',
+    // width: '100%',
+    // margin: SIZING[2],
+    borderRadius: RADIUS.full,
     justifyContent: 'space-between',
     display: 'flex',
     flexDirection: 'row',
-    backgroundColor: COLORS.background,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    boxShadow: BOX_SHADOWS.xl,
+    // backgroundColor: COLORS.background,
+    // boxShadow: BOX_SHADOWS.md,
+    // boxShadow: BOX_SHADOWS.xl,
   },
   // Guide lines for alignment
   verticalLine: {
@@ -60,59 +62,18 @@ export default StyleSheet.create({
     opacity: 0.7,
     zIndex: 1000,
   },
-  // Add quarter lines for better edge snapping visualization
-  verticalQuarterLineLeft: {
-    position: 'absolute',
-    left: '25%',
-    top: 0,
-    bottom: 0,
-    width: 1,
-    backgroundColor: '#ff0000',
-    opacity: 0.4,
-    zIndex: 1000,
-  },
-  verticalQuarterLineRight: {
-    position: 'absolute',
-    left: '75%',
-    top: 0,
-    bottom: 0,
-    width: 1,
-    backgroundColor: '#ff0000',
-    opacity: 0.4,
-    zIndex: 1000,
-  },
-  horizontalQuarterLineTop: {
-    position: 'absolute',
-    top: '25%',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: '#ff0000',
-    opacity: 0.4,
-    zIndex: 1000,
-  },
-  horizontalQuarterLineBottom: {
-    position: 'absolute',
-    top: '75%',
-    left: 0,
-    right: 0,
-    height: 1,
-    backgroundColor: '#ff0000',
-    opacity: 0.4,
-    zIndex: 1000,
-  },
   floatingAddElementContainer: {
     position: 'absolute',
-    bottom: SIZING.md,
-    left: SIZING.md,
+    bottom: SIZING[3],
+    left: SIZING[3],
     flexDirection: 'row',
     gap: SIZING.md,
     zIndex: 1000,
   },
   floatingEditElementContainer: {
     position: 'absolute',
-    bottom: SIZING.md,
-    right: SIZING.md,
+    bottom: SIZING[3],
+    right: SIZING[3],
     flexDirection: 'row',
     gap: SIZING.md,
     zIndex: 1000,
