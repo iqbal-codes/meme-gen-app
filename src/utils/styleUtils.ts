@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, TextStyle, ViewStyle } from 'react-native';
-import { COLORS, RADIUS, SIZING, FONT, SCREEN_WIDTH } from '../constants/theme';
+import { COLORS, RADIUS, SIZING, FONT, SCREEN_WIDTH } from '@/constants/theme';
 
 // Common variant styles for components
 export const variants = {

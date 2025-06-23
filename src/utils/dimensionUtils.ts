@@ -1,6 +1,6 @@
-import { CanvasElement } from '../types';
+import { CanvasElement } from '@/types';
 
-import { ElementDimensions } from '../types/elements';
+import { ElementDimensions } from '@/types';
 
 // Default dimensions for different element types
 const DEFAULT_DIMENSIONS = {

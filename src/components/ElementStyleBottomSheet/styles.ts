@@ -5,7 +5,7 @@ import {
   FONT,
   RADIUS,
   BOX_SHADOWS,
-} from '../../constants/theme';
+} from '@/constants';
 
 const styles = StyleSheet.create({
   container: {

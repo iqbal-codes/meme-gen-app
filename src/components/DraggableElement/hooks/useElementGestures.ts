@@ -5,7 +5,7 @@ import {
   useAnimatedStyle,
   runOnJS,
 } from 'react-native-reanimated';
-import { CanvasElement } from '../../../types';
+import { CanvasElement } from '@/types';
 
 interface UseElementGesturesProps {
   element: CanvasElement;

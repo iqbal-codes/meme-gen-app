@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal, View, Text, TouchableOpacity, StatusBar } from 'react-native';
-import Button from '../Button';
-import { ButtonVariant } from '../../types/ui';
+import { Button } from '@/components';
+import { ButtonVariant } from '@/types';
 import styles from './styles';
 
 export interface ConfirmationModalProps {

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Text, Image, Alert, FlatList, Pressable } from 'react-native';
-import BaseBottomSheet from '../BaseBottomSheet';
+import { Text, Image, FlatList, Pressable } from 'react-native';
+import { BaseBottomSheet } from '@/components';
 import styles from './styles';
-import { MEME_TEMPLATES } from '../../constants/memeTemplates';
-import { MemeTemplate } from '../../types';
-import { useConfirmation } from '../../contexts';
+import { MEME_TEMPLATES } from '@/constants';
+import { MemeTemplate } from '@/types';
+import { useConfirmation } from '@/contexts';
 
 interface ImageSelectionBottomSheetProps {
   visible: boolean;

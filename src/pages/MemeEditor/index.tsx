@@ -24,16 +24,16 @@ import {
   ElementStyleBottomSheet,
   TemplatePickerBottomSheet,
   PhotoPickerBottomSheet,
-} from '../components';
-import styles from '../styles';
-import { CanvasElement, ElementStyle } from '../types';
+  Button,
+} from '@/components';
+import styles from '@/styles';
+import { CanvasElement, ElementStyle } from '@/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, SCREEN_WIDTH, SIZING } from '../constants/theme';
-import Button from '../components/Button';
-import useImageHeight from '../hooks/useImageHeight';
+import { COLORS, SCREEN_WIDTH, SIZING } from '@/constants';
+import { useImageHeight } from '@/hooks';
 import Icons from '@react-native-vector-icons/lucide';
-import { ensureCameraRollPermission } from '../utils/permissionUtils';
-import { ConfirmationProvider, useConfirmation } from '../contexts';
+import { ensureCameraRollPermission } from '@/utils';
+import { useConfirmation } from '@/contexts';
 // We will create this component in the next step
 
 const MemeEditorPage: React.FC = () => {

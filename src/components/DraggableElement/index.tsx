@@ -9,11 +9,10 @@ import {
 } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import { CanvasElement } from '../../types';
-import { SCREEN_WIDTH, SIZING } from '../../constants/theme';
+import { CanvasElement } from '@/types';
 import useElementGestures from './hooks/useElementGestures';
 import styles from './styles';
-import { useElementDimensions } from '../../hooks/useElementDimensions';
+import { useElementDimensions } from '@/hooks';
 
 interface DraggableElementProps {
   element: CanvasElement;

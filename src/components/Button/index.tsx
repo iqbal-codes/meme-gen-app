@@ -10,8 +10,8 @@ import {
   GestureResponderEvent,
 } from 'react-native';
 import styles from './styles';
-import { COLORS, RADIUS } from '../../constants/theme';
-import { ButtonVariant, ButtonSize, ButtonRounded } from '../../types';
+import { COLORS, RADIUS } from '@/constants/theme';
+import { ButtonVariant, ButtonSize, ButtonRounded } from '@/types';
 
 export interface ButtonProps {
   onPress?: (e: GestureResponderEvent) => void;

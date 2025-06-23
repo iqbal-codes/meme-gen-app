@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleProp, TextStyle as RNTextStyle } from 'react-native';
+import { View, Text, TextStyle as RNTextStyle } from 'react-native';
 import Slider from '@react-native-community/slider';
-import Button from '../Button';
-import BaseBottomSheet from '../BaseBottomSheet';
+import { Button, BaseBottomSheet } from '@/components';
+
 import styles from './styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icons from '@react-native-vector-icons/lucide';
-import { COLORS } from '../../constants/theme';
-import { CanvasElement, ElementStyle } from '../../types';
+import { COLORS } from '@/constants';
+import { CanvasElement, ElementStyle } from '@/types';
 
 const DEFAULT_TEXT_STYLE: ElementStyle = {
   color: '#000000',
@@ -184,7 +184,11 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     ]}
                     icon={
                       bgColor === 'transparent' && (
-                        <Icons name="ban" size={24} color={COLORS.destructive} />
+                        <Icons
+                          name="ban"
+                          size={24}
+                          color={COLORS.destructive}
+                        />
                       )
                     }
                     onPress={() =>

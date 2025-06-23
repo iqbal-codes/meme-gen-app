@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ButtonVariant } from '../types/ui';
+import { ButtonVariant } from '@/types';
 // Import the modal component
-import { ConfirmationModal } from '../components/ConfirmationModal';
+import { ConfirmationModal } from '@/components';
 
 export interface ConfirmationOptions {
   title: string;

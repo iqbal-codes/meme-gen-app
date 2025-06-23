@@ -1,4 +1,4 @@
-import { MemeTemplate } from "../types";
+import { MemeTemplate } from "@/types";
 
 export const MEME_TEMPLATES: MemeTemplate[] = [
   {

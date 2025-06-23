@@ -1,8 +1,12 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZING } from '../../constants/theme';
-import { calculateFlatListItemWidth } from '../../utils/styleUtils';
+import { COLORS, SIZING } from '@/constants';
+import { calculateFlatListItemWidth } from '@/utils';
 
-const photoSize = calculateFlatListItemWidth({ numColumns: 3, containerPadding: SIZING[3], gap: SIZING[2] });
+const photoSize = calculateFlatListItemWidth({
+  numColumns: 3,
+  containerPadding: SIZING[3],
+  gap: SIZING[2],
+});
 
 export default StyleSheet.create({
   columnWrapper: {

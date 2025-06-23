@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Image, ImageSourcePropType, ImageURISource } from "react-native";
-import { SCREEN_WIDTH, SIZING } from "../constants/theme";
+import { Image, ImageURISource } from "react-native";
+import { SCREEN_WIDTH, SIZING } from "@/constants";
 
 const useImageHeight = (imageSource?: number | ImageURISource) => {
   const [imageHeight, setImageHeight] = useState<number>(0);

@@ -1,17 +1,9 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  FlatList,
-  Pressable,
-} from 'react-native';
+import { Image, FlatList, Pressable } from 'react-native';
 
-import { BaseBottomSheet, Button } from '..';
+import { BaseBottomSheet } from '@/components';
 import styles from './styles';
 import { PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
-import { COLORS } from '../../constants/theme';
 
 interface PhotoPickerBottomSheetProps {
   visible: boolean;
@@ -43,11 +35,7 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
   );
 
   return (
-    <BaseBottomSheet
-      visible={visible}
-      onClose={onClose}
-      title="Select Image"
-    >
+    <BaseBottomSheet visible={visible} onClose={onClose} title="Select Image">
       <FlatList
         data={photos}
         renderItem={renderPhotoItem}

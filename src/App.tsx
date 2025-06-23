@@ -1,6 +1,6 @@
 import React from 'react';
-import { ConfirmationProvider } from './contexts';
-import { MemeEditorPage } from './pages';
+import { ConfirmationProvider } from '@/contexts';
+import { MemeEditorPage } from '@/pages';
 
 const App: React.FC = () => {
   return (

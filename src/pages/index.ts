@@ -1,1 +1,1 @@
-export { default as MemeEditorPage } from './MemeEditorPage';
+export { default as MemeEditorPage } from './MemeEditor';

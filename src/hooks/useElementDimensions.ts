@@ -1,10 +1,10 @@
 import { useState, useCallback, useRef } from 'react';
-import { CanvasElement, ElementDimensions, MeasuredDimensions } from '../types';
+import { CanvasElement, ElementDimensions, MeasuredDimensions } from '@/types';
 import {
   getDefaultDimensions,
   normalizeDimensions,
   isValidDimensions,
-} from '../utils/dimensionUtils';
+} from '@/utils';
 
 interface UseElementDimensionsProps {
   element: CanvasElement;
