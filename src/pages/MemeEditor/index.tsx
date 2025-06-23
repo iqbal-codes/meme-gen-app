@@ -21,6 +21,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import ViewShot, { captureRef } from 'react-native-view-shot';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   DraggableElement,
   ElementStyleBottomSheet,
@@ -30,7 +31,6 @@ import {
 } from '@/components';
 import styles from '@/styles';
 import { CanvasElement } from '@/types';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { SCREEN_WIDTH, SIZING } from '@/constants';
 import { useImageHeight } from '@/hooks';
 import { ensureCameraRollPermission } from '@/utils';
@@ -71,7 +71,7 @@ const MemeEditorPage: React.FC = () => {
     newPosition?: { x: number; y: number },
   ) => {
     if (newPosition) {
-      setElements(prev => ({
+      setElements((prev) => ({
         ...prev,
         [elementId]: { ...prev[elementId], x: newPosition.x, y: newPosition.y },
       }));
@@ -87,7 +87,7 @@ const MemeEditorPage: React.FC = () => {
 
   // Function to update text content
   const onUpdateText = (elementId: string, newText: string) => {
-    setElements(prev => ({
+    setElements((prev) => ({
       ...prev,
       [elementId]: { ...prev[elementId], text: newText },
     }));
@@ -95,7 +95,7 @@ const MemeEditorPage: React.FC = () => {
 
   // Function to update text style
   const onUpdateElementStyle = (elementId: string, newStyle: TextStyle) => {
-    setElements(prev => ({
+    setElements((prev) => ({
       ...prev,
       [elementId]: { ...prev[elementId], style: newStyle },
     }));
@@ -125,14 +125,15 @@ const MemeEditorPage: React.FC = () => {
       style: {
         opacity: 1,
         color: '#000000',
-        fontWeight: 'normal',
+        fontFamily: 'nunito',
+        fontWeight: 'regular',
         fontStyle: 'normal',
         textDecorationLine: 'none',
         fontSize: 24,
         textAlign: 'center',
       },
     };
-    setElements(prev => ({ ...prev, [newTextElement.id]: newTextElement }));
+    setElements((prev) => ({ ...prev, [newTextElement.id]: newTextElement }));
   };
 
   const handlePhotoSelect = (imageUri: string) => {
@@ -147,7 +148,7 @@ const MemeEditorPage: React.FC = () => {
         width: 150 * aspectRatio,
         height: 150,
       };
-      setElements(prev => ({ ...prev, [newImageElement.id]: newImageElement }));
+      setElements((prev) => ({ ...prev, [newImageElement.id]: newImageElement }));
     });
   };
 
@@ -193,6 +194,7 @@ const MemeEditorPage: React.FC = () => {
     .numberOfTaps(2)
     .onStart(() => {
       'worklet';
+
       scale.value = 1; // Reset zoom to original size
       translateX.value = 0; // Reset pan position
       translateY.value = 0;
@@ -206,13 +208,15 @@ const MemeEditorPage: React.FC = () => {
 
   // Pinch gesture for zooming
   const pinchGesture = Gesture.Pinch()
-    .onStart(event => {
+    .onStart((event) => {
       'worklet';
+
       focalX.value = event.focalX;
       focalY.value = event.focalY;
     })
-    .onUpdate(event => {
+    .onUpdate((event) => {
       'worklet';
+
       // Limit scale between 1 and 3
       scale.value = Math.min(Math.max(event.scale, 1), 3);
     });
@@ -221,11 +225,13 @@ const MemeEditorPage: React.FC = () => {
   const panGesture = Gesture.Pan()
     .onStart(() => {
       'worklet';
+
       contextX.value = translateX.value;
       contextY.value = translateY.value;
     })
-    .onUpdate(event => {
+    .onUpdate((event) => {
       'worklet';
+
       // Only allow panning when zoomed in
       if (scale.value > 1) {
         // Calculate max pan limits based on zoom level
@@ -245,15 +251,13 @@ const MemeEditorPage: React.FC = () => {
     });
 
   // Animated style for the canvas container
-  const animatedCanvasStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { translateX: translateX.value },
-        { translateY: translateY.value },
-        { scale: scale.value },
-      ],
-    };
-  });
+  const animatedCanvasStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      { scale: scale.value },
+    ],
+  }));
 
   // Function to handle copy element
   const onCopyElement = (elementId: string) => {
@@ -265,13 +269,13 @@ const MemeEditorPage: React.FC = () => {
         x: elementToCopy.x + 20, // Offset the copy slightly
         y: elementToCopy.y + 20,
       };
-      setElements(prev => ({ ...prev, [newElement.id]: newElement }));
+      setElements((prev) => ({ ...prev, [newElement.id]: newElement }));
       setSelectedId(newElement.id); // Select the new copied element
     }
   };
 
   const updateElement = useCallback((updatedElement: CanvasElement) => {
-    setElements(prev => ({ ...prev, [updatedElement.id]: updatedElement }));
+    setElements((prev) => ({ ...prev, [updatedElement.id]: updatedElement }));
   }, []);
 
   const onSave = async () => {
@@ -289,7 +293,8 @@ const MemeEditorPage: React.FC = () => {
     const aspectRatio = canvasWidth / canvasHeight;
 
     // Calculate dimensions maintaining aspect ratio
-    let captureWidth, captureHeight;
+    let captureWidth; let
+      captureHeight;
     if (aspectRatio > 1) {
       // Landscape: width is larger
       captureWidth = targetPixelCount / pixelRatio;
@@ -411,13 +416,13 @@ const MemeEditorPage: React.FC = () => {
                         <View style={styles.horizontalLine} />
                       </>
                     )}
-                    {Object.values(elements).map(el => (
+                    {Object.values(elements).map((el) => (
                       <DraggableElement
                         key={el.id}
                         element={el}
-                        onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
+                        onDragEnd={(newPosition) => onDragEnd(el.id, newPosition)}
                         onDragStart={() => onDragStart(el.id)}
-                        onUpdateText={newText => onUpdateText(el.id, newText)}
+                        onUpdateText={(newText) => onUpdateText(el.id, newText)}
                         onEdit={() => setEditingId(el.id)}
                         onSelect={() => setSelectedId(el.id)}
                         isSelecting={selectedId === el.id}
@@ -484,7 +489,7 @@ const MemeEditorPage: React.FC = () => {
         visible={showStyleElement}
         onClose={() => setShowStyleElement(false)}
         element={elements[selectedId!]}
-        onStyleChange={style => {
+        onStyleChange={(style) => {
           if (selectedId) {
             onUpdateElementStyle(selectedId, style);
           }

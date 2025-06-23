@@ -7,18 +7,18 @@ import {
   ViewStyle,
 } from 'react-native';
 import Slider from '@react-native-community/slider';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Button, BaseBottomSheet } from '@/components';
 
 import styles from './styles';
-import { ScrollView } from 'react-native-gesture-handler';
-import Icons from '@react-native-vector-icons/lucide';
 import { COLORS } from '@/constants';
-import { AllIconProps, CanvasElement } from '@/types';
-import Icon from '@react-native-vector-icons/lucide';
+import { AllIconProps, CanvasElement, FontFamily } from '@/types';
+import { getFont } from '@/utils';
 
 const DEFAULT_TEXT_STYLE: TextStyle = {
   color: '#000000',
-  fontWeight: 'normal',
+  fontFamily: 'nunito',
+  fontWeight: 'regular',
   fontStyle: 'normal',
   textDecorationLine: 'none',
   fontSize: 24,
@@ -81,6 +81,17 @@ const textAigns: {
   { value: 'right', icon: 'align-right' },
 ];
 
+const fontFamily: {
+  title: string;
+  value: FontFamily;
+}[] = [
+  { title: 'Nunito', value: 'nunito' },
+  { title: 'Montserrat', value: 'montserrat' },
+  { title: 'Baskerville', value: 'baskerville' },
+  { title: 'Roboto', value: 'roboto' },
+  { title: 'Fredoka', value: 'fredoka' },
+];
+
 const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
   visible,
   onClose,
@@ -102,7 +113,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
   }, [visible, element?.style, defaultStyle]);
 
   const updateLocalStyle = (updates: Partial<TextStyle>) => {
-    setLocalStyle(prev => ({ ...prev, ...updates }));
+    setLocalStyle((prev) => ({ ...prev, ...updates }));
   };
 
   const handleSave = () => {
@@ -145,7 +156,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
               minimumValue={0}
               maximumValue={1}
               value={localStyle.opacity as number}
-              onValueChange={value => updateLocalStyle({ opacity: value })}
+              onValueChange={(value) => updateLocalStyle({ opacity: value })}
               minimumTrackTintColor={COLORS.primary}
               maximumTrackTintColor={COLORS.mutedForeground}
               thumbTintColor={COLORS.primary}
@@ -161,7 +172,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Color</Text>
               <View style={styles.colorGrid}>
-                {COLOR_OPTIONS.map(color => (
+                {COLOR_OPTIONS.map((color) => (
                   <Button
                     key={color}
                     variant={localStyle.color === color ? 'primary' : 'outline'}
@@ -182,7 +193,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Highlight</Text>
               <View style={styles.colorGrid}>
-                {COLOR_WITH_TRANSPARENT_OPTIONS.map(color => (
+                {COLOR_WITH_TRANSPARENT_OPTIONS.map((color) => (
                   <Button
                     key={color}
                     variant={
@@ -195,8 +206,8 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     style={[
                       styles.colorOption,
                       { backgroundColor: color },
-                      localStyle.backgroundColor === color &&
-                        styles.selectedColor,
+                      localStyle.backgroundColor === color
+                        && styles.selectedColor,
                     ]}
                     icon={color === 'transparent' ? 'ban' : undefined}
                     onPress={() => updateLocalStyle({ backgroundColor: color })}
@@ -205,25 +216,22 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
               </View>
             </View>
 
+            {/* Font Family Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Align</Text>
+              <Text style={styles.sectionTitle}>Family</Text>
               <View style={styles.buttonRow}>
-                {textAigns.map(align => (
+                {fontFamily.map((family) => (
                   <Button
-                    key={align.value}
+                    key={family.value}
                     variant={
-                      localStyle.textAlign === align.value
+                      localStyle.fontFamily === family.value
                         ? 'primary'
-                        : 'outline'
+                        : 'secondary'
                     }
-                    icon={align.icon}
+                    title={family.title}
                     rounded="full"
-                    textStyle={{ textAlign: align.value }}
-                    onPress={() =>
-                      updateLocalStyle({
-                        textAlign: align.value,
-                      })
-                    }
+                    textStyle={{ ...getFont(family.value) }}
+                    onPress={() => updateLocalStyle({ fontFamily: family.value })}
                   />
                 ))}
               </View>
@@ -233,22 +241,20 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Weight</Text>
               <View style={styles.buttonRow}>
-                {fontWeights.map(weight => (
+                {fontWeights.map((weight) => (
                   <Button
                     key={weight.value}
                     variant={
                       localStyle.fontWeight === weight.value
                         ? 'primary'
-                        : 'outline'
+                        : 'secondary'
                     }
                     title={weight.title}
                     rounded="full"
                     textStyle={{
                       fontWeight: weight.value,
                     }}
-                    onPress={() =>
-                      updateLocalStyle({ fontWeight: weight.value })
-                    }
+                    onPress={() => updateLocalStyle({ fontWeight: weight.value })}
                   />
                 ))}
               </View>
@@ -258,13 +264,13 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Style</Text>
               <View style={styles.buttonRow}>
-                {fontStyles.map(style => (
+                {fontStyles.map((style) => (
                   <Button
                     key={style.value}
                     variant={
                       localStyle.fontStyle === style.value
                         ? 'primary'
-                        : 'outline'
+                        : 'secondary'
                     }
                     title={style.title}
                     rounded="full"
@@ -281,22 +287,43 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Decoration</Text>
               <View style={styles.buttonRow}>
-                {textDecorations.map(decoration => (
+                {textDecorations.map((decoration) => (
                   <Button
                     key={decoration.value}
                     variant={
                       localStyle.textDecorationLine === decoration.value
                         ? 'primary'
-                        : 'outline'
+                        : 'secondary'
                     }
                     title={decoration.title}
                     rounded="full"
                     textStyle={{ textDecorationLine: decoration.value }}
-                    onPress={() =>
-                      updateLocalStyle({
-                        textDecorationLine: decoration.value,
-                      })
+                    onPress={() => updateLocalStyle({
+                      textDecorationLine: decoration.value,
+                    })}
+                  />
+                ))}
+              </View>
+            </View>
+
+            {/* Text Align Section */}
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Align</Text>
+              <View style={styles.buttonRow}>
+                {textAigns.map((align) => (
+                  <Button
+                    key={align.value}
+                    variant={
+                      localStyle.textAlign === align.value
+                        ? 'primary'
+                        : 'secondary'
                     }
+                    icon={align.icon}
+                    rounded="full"
+                    textStyle={{ textAlign: align.value }}
+                    onPress={() => updateLocalStyle({
+                      textAlign: align.value,
+                    })}
                   />
                 ))}
               </View>

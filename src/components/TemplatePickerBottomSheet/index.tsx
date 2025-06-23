@@ -1,5 +1,7 @@
 import React from 'react';
-import { Text, Image, FlatList, Pressable } from 'react-native';
+import {
+  Text, Image, FlatList, Pressable,
+} from 'react-native';
 import { BaseBottomSheet } from '@/components';
 import styles from './styles';
 import { MEME_TEMPLATES } from '@/constants';

@@ -1,5 +1,7 @@
 import React, { ReactNode } from 'react';
-import { View, Text, Modal, Pressable, ScrollView, DimensionValue } from 'react-native';
+import {
+  View, Text, Modal, Pressable, ScrollView, DimensionValue,
+} from 'react-native';
 import Icons from '@react-native-vector-icons/lucide';
 import Button from '@/components/Button';
 import { COLORS } from '@/constants/theme';

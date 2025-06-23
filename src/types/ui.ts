@@ -1,9 +1,9 @@
-import Icon from "@react-native-vector-icons/lucide";
+import Icon from '@react-native-vector-icons/lucide';
 
 // UI-related types
-export type ButtonVariant = 
+export type ButtonVariant =
   | 'primary'
-  | 'secondary' 
+  | 'secondary'
   | 'outline'
   | 'ghost'
   | 'danger';

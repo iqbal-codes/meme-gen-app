@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Image, ImageURISource } from "react-native";
-import { SCREEN_WIDTH, SIZING } from "@/constants";
+import { useEffect, useState } from 'react';
+import { Image, ImageURISource } from 'react-native';
+import { SCREEN_WIDTH, SIZING } from '@/constants';
 
 const useImageHeight = (imageSource?: number | ImageURISource) => {
   const [imageHeight, setImageHeight] = useState<number>(0);
@@ -26,7 +26,7 @@ const useImageHeight = (imageSource?: number | ImageURISource) => {
           const calculatedHeight = (SCREEN_WIDTH - SIZING.md * 2) / aspectRatio;
           setImageHeight(calculatedHeight);
         },
-        error => {
+        (error) => {
           console.error(`Couldn't get image size: ${error.message}`);
           // Fallback or error handling
         },

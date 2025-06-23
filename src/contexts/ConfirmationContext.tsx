@@ -1,19 +1,9 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { ButtonVariant } from '@/types';
+import React, {
+  createContext, useContext, useState, ReactNode,
+} from 'react';
+import { ConfirmationOptions } from '@/types';
 // Import the modal component
 import { ConfirmationModal } from '@/components';
-
-export interface ConfirmationOptions {
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  confirmVariant?: ButtonVariant;
-  cancelVariant?: ButtonVariant;
-  onConfirm?: () => void;
-  onCancel?: () => void;
-  showCancel?: boolean;
-}
 
 interface ConfirmationContextType {
   showConfirmation: (options: ConfirmationOptions) => void;

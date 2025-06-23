@@ -58,14 +58,14 @@ export const useElementDimensions = ({
   const onLayout = useCallback(
     (event: { nativeEvent: { layout: { width: number; height: number } } }) => {
       const { width, height } = event.nativeEvent.layout;
-      
+
       if (isValidDimensions({ width, height })) {
         const measured = cacheDimensions(element.id, { width, height });
         setMeasuredDimensions(measured);
         setIsLoading(false);
       }
     },
-    [element.id, cacheDimensions]
+    [element.id, cacheDimensions],
   );
 
   // Get current dimensions

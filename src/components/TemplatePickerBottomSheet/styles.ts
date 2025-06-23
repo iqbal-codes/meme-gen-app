@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZING, FONT, RADIUS } from '@/constants';
+import {
+  COLORS, SIZING, FONT, RADIUS,
+} from '@/constants';
 import { calculateFlatListItemWidth } from '@/utils';
 
 const imageWidth = calculateFlatListItemWidth({

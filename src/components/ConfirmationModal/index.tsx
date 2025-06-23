@@ -1,5 +1,7 @@
 import React from 'react';
-import { Modal, View, Text, TouchableOpacity, StatusBar } from 'react-native';
+import {
+  Modal, View, Text, TouchableOpacity, StatusBar,
+} from 'react-native';
 import { Button } from '@/components';
 import { ButtonVariant } from '@/types';
 import styles from './styles';
@@ -62,7 +64,7 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         <TouchableOpacity
           style={styles.container}
           activeOpacity={1}
-          onPress={e => e.stopPropagation()}
+          onPress={(e) => e.stopPropagation()}
         >
           <View style={styles.content}>
             <Text style={styles.title}>{title}</Text>

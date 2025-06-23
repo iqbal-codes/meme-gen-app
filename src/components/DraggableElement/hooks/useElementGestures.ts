@@ -98,7 +98,7 @@ const useElementGestures = ({
   // Helper function for rotation snapping
   const applyRotationSnapping = (newRotation: number) => {
     'worklet';
-    
+
     const degrees = (newRotation * 180) / Math.PI;
     const normalizedDegrees = ((degrees % 360) + 360) % 360;
 
@@ -120,6 +120,7 @@ const useElementGestures = ({
   // Helper function for scale constraints
   const applyScaleConstraints = (newScale: number) => {
     'worklet';
+
     return Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
   };
 
@@ -139,6 +140,7 @@ const useElementGestures = ({
   // Shared transform callback
   const handleTransformEnd = useCallback(() => {
     'worklet';
+
     if (onTransform) {
       runOnJS(onTransform)({ scale: scale.value, rotation: rotation.value });
     }
@@ -150,30 +152,35 @@ const useElementGestures = ({
     .enabled(!isEditing)
     .onBegin(() => {
       'worklet';
+
       isPressed.value = true;
     })
     .onStart(() => {
       'worklet';
+
       offsetX.value = translateX.value;
       offsetY.value = translateY.value;
       runOnJS(onDragStart)();
     })
-    .onUpdate(event => {
+    .onUpdate((event) => {
       'worklet';
+
       const newX = event.translationX + offsetX.value;
       const newY = event.translationY + offsetY.value;
       const snappedPosition = applyPositionSnapping(newX, newY);
-      
+
       translateX.value = snappedPosition.x;
       translateY.value = snappedPosition.y;
     })
     .onEnd(() => {
       'worklet';
+
       runOnJS(onDragEnd)({ x: translateX.value, y: translateY.value });
       runOnJS(updateElementTransform)();
     })
     .onFinalize(() => {
       'worklet';
+
       isPressed.value = false;
     });
 
@@ -182,10 +189,12 @@ const useElementGestures = ({
     .enabled(!isEditing)
     .onStart(() => {
       'worklet';
+
       savedRotation.value = rotation.value;
     })
-    .onUpdate(event => {
+    .onUpdate((event) => {
       'worklet';
+
       const newRotation = savedRotation.value + event.rotation;
       rotation.value = applyRotationSnapping(newRotation);
     })
@@ -196,10 +205,12 @@ const useElementGestures = ({
     .enabled(!isEditing)
     .onStart(() => {
       'worklet';
+
       savedScale.value = scale.value;
     })
-    .onUpdate(event => {
+    .onUpdate((event) => {
       'worklet';
+
       const newScale = savedScale.value * event.scale;
       scale.value = applyScaleConstraints(newScale);
     })

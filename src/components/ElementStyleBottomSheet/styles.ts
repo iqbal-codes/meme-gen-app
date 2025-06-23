@@ -65,7 +65,7 @@ const styles = StyleSheet.create({
   },
   selectedFontSize: {
     borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary + '20',
+    backgroundColor: `${COLORS.primary}20`,
   },
   fontSizeText: {
     fontSize: FONT.sizes.sm,
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   },
   selectedButton: {
     borderColor: COLORS.primary,
-    backgroundColor: COLORS.primary + '20',
+    backgroundColor: `${COLORS.primary}20`,
   },
   buttonText: {
     fontSize: FONT.sizes.sm,

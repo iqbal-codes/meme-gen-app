@@ -1,27 +1,5 @@
 import { TextStyle } from 'react-native';
-
-// Simplified font family types - only main variants
-export type FontFamily =
-  | 'montserrat'
-  | 'baskerville'
-  | 'fredoka'
-  | 'nunito'
-  | 'roboto';
-
-// Font weight types
-export type FontWeight =
-  | 'thin'
-  | 'extralight'
-  | 'light'
-  | 'regular'
-  | 'medium'
-  | 'semibold'
-  | 'bold'
-  | 'extrabold'
-  | 'black';
-
-// Font style types
-export type FontStyle = 'normal' | 'italic';
+import { FontFamily, FontStyle, FontWeight } from '@/types';
 
 // Simplified font configuration - only main fonts
 const FONT_CONFIG = {
@@ -147,29 +125,6 @@ const FONT_CONFIG = {
   },
 };
 
-// Font weight to numeric mapping
-const FONT_WEIGHT_MAP: Record<FontWeight, TextStyle['fontWeight']> = {
-  thin: '100',
-  extralight: '200',
-  light: '300',
-  regular: '400',
-  medium: '500',
-  semibold: '600',
-  bold: '700',
-  extrabold: '800',
-  black: '900',
-};
-
-// Configuration for font mode (variable vs static)
-let USE_VARIABLE_FONTS = false;
-
-/**
- * Set whether to use variable fonts or static fonts
- */
-export const setFontMode = (useVariable: boolean) => {
-  USE_VARIABLE_FONTS = useVariable;
-};
-
 /**
  * Get font style object for the specified family, weight, and style
  */
@@ -178,16 +133,6 @@ export const getFont = (
   weight: FontWeight = 'regular',
   style: FontStyle = 'normal',
 ): Pick<TextStyle, 'fontFamily' | 'fontWeight' | 'fontStyle'> => {
-  // For variable fonts
-  if (USE_VARIABLE_FONTS && FONT_CONFIG.variable[family]) {
-    return {
-      fontFamily: FONT_CONFIG.variable[family],
-      fontWeight: FONT_WEIGHT_MAP[weight],
-      fontStyle: style,
-    };
-  }
-
-  // For static fonts
   const staticFont = FONT_CONFIG.static[family];
   if (!staticFont) {
     console.warn(
@@ -217,52 +162,4 @@ export const getFont = (
   }
 
   return { fontFamily };
-};
-
-/**
- * Convenience function to get font with size
- */
-export const getFontWithSize = (
-  family: FontFamily,
-  weight: FontWeight = 'regular',
-  size: number,
-  style: FontStyle = 'normal',
-): Pick<TextStyle, 'fontFamily' | 'fontWeight' | 'fontStyle' | 'fontSize'> => {
-  return {
-    ...getFont(family, weight, style),
-    fontSize: size,
-  };
-};
-
-/**
- * Helper function to get Newsreader font with specific optical size
- */
-export const getNewsreaderFont = (
-  opticalSize: '9pt' | '14pt' | '24pt' | '36pt' | '60pt' = '14pt',
-  weight: FontWeight = 'regular',
-  style: FontStyle = 'normal',
-) => {
-  const weightMap = {
-    thin: 'ExtraLight',
-    extralight: 'ExtraLight',
-    light: 'Light',
-    regular: 'Regular',
-    medium: 'Medium',
-    semibold: 'SemiBold',
-    bold: 'Bold',
-    extrabold: 'ExtraBold',
-    black: 'ExtraBold',
-  };
-
-  const styleMap = {
-    normal: '',
-    italic: 'Italic',
-  };
-
-  const fontWeight = weightMap[weight];
-  const fontStyle = styleMap[style];
-
-  return {
-    fontFamily: `Newsreader_${opticalSize}-${fontWeight}${fontStyle}`,
-  };
 };

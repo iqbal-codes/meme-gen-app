@@ -1,31 +1,7 @@
 import { Platform, PermissionsAndroid } from 'react-native';
+import { PermissionStatus, PermissionResult, PermissionType } from '@/types';
 
-/**
- * Permission types supported by the app
- */
-export enum PermissionType {
-  CAMERA_ROLL = 'CAMERA_ROLL',
-  CAMERA = 'CAMERA',
-}
-
-/**
- * Permission status enum
- */
-export enum PermissionStatus {
-  GRANTED = 'granted',
-  DENIED = 'denied',
-  NEVER_ASK_AGAIN = 'never_ask_again',
-  UNAVAILABLE = 'unavailable',
-}
-
-/**
- * Permission result interface
- */
-export interface PermissionResult {
-  status: PermissionStatus;
-  canAskAgain: boolean;
-}
-
+/*
 /**
  * Check if the app has camera roll permissions
  * Handles different Android API levels (33+ vs older)
@@ -39,16 +15,19 @@ export const checkCameraRollPermission = async (): Promise<boolean> => {
     if (Number(Platform.Version) >= 33) {
       // Android 13+ uses granular media permissions
       const [hasReadMediaImages, hasReadMediaVideo] = await Promise.all([
-        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
-        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
+        PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        ),
+        PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
+        ),
       ]);
       return hasReadMediaImages && hasReadMediaVideo;
-    } else {
-      // Android 12 and below use READ_EXTERNAL_STORAGE
-      return await PermissionsAndroid.check(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      );
     }
+    // Android 12 and below use READ_EXTERNAL_STORAGE
+    return await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    );
   } catch (error) {
     console.error('Error checking camera roll permission:', error);
     return false;
@@ -75,9 +54,11 @@ export const requestCameraRollPermission = async (): Promise<PermissionResult> =
         PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
       ]);
 
-      const imagesGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] === PermissionsAndroid.RESULTS.GRANTED;
-      const videoGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] === PermissionsAndroid.RESULTS.GRANTED;
-      
+      const imagesGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES]
+          === PermissionsAndroid.RESULTS.GRANTED;
+      const videoGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO]
+          === PermissionsAndroid.RESULTS.GRANTED;
+
       if (imagesGranted && videoGranted) {
         return {
           status: PermissionStatus.GRANTED,
@@ -85,31 +66,32 @@ export const requestCameraRollPermission = async (): Promise<PermissionResult> =
         };
       }
 
-      const imagesDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
-      const videoDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
-      
+      const imagesDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES]
+          === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
+      const videoDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO]
+          === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
+
       return {
         status: PermissionStatus.DENIED,
         canAskAgain: !(imagesDenied || videoDenied),
       };
-    } else {
-      // Android 12 and below use READ_EXTERNAL_STORAGE
-      const status = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-      );
+    }
+    // Android 12 and below use READ_EXTERNAL_STORAGE
+    const status = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+    );
 
-      if (status === PermissionsAndroid.RESULTS.GRANTED) {
-        return {
-          status: PermissionStatus.GRANTED,
-          canAskAgain: false,
-        };
-      }
-
+    if (status === PermissionsAndroid.RESULTS.GRANTED) {
       return {
-        status: PermissionStatus.DENIED,
-        canAskAgain: status !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
+        status: PermissionStatus.GRANTED,
+        canAskAgain: false,
       };
     }
+
+    return {
+      status: PermissionStatus.DENIED,
+      canAskAgain: status !== PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN,
+    };
   } catch (error) {
     console.error('Error requesting camera roll permission:', error);
     return {
@@ -149,7 +131,9 @@ export const checkCameraPermission = async (): Promise<boolean> => {
   }
 
   try {
-    return await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
+    return await PermissionsAndroid.check(
+      PermissionsAndroid.PERMISSIONS.CAMERA,
+    );
   } catch (error) {
     console.error('Error checking camera permission:', error);
     return false;
@@ -195,7 +179,9 @@ export const requestCameraPermission = async (): Promise<PermissionResult> => {
 /**
  * Generic permission checker for any permission type
  */
-export const checkPermission = async (permissionType: PermissionType): Promise<boolean> => {
+export const checkPermission = async (
+  permissionType: PermissionType,
+): Promise<boolean> => {
   switch (permissionType) {
     case PermissionType.CAMERA_ROLL:
       return checkCameraRollPermission();
@@ -210,7 +196,9 @@ export const checkPermission = async (permissionType: PermissionType): Promise<b
 /**
  * Generic permission requester for any permission type
  */
-export const requestPermission = async (permissionType: PermissionType): Promise<PermissionResult> => {
+export const requestPermission = async (
+  permissionType: PermissionType,
+): Promise<PermissionResult> => {
   switch (permissionType) {
     case PermissionType.CAMERA_ROLL:
       return requestCameraRollPermission();
@@ -229,7 +217,9 @@ export const requestPermission = async (permissionType: PermissionType): Promise
  * Show permission rationale to user
  * You can customize these messages based on your app's needs
  */
-export const getPermissionRationale = (permissionType: PermissionType): string => {
+export const getPermissionRationale = (
+  permissionType: PermissionType,
+): string => {
   switch (permissionType) {
     case PermissionType.CAMERA_ROLL:
       return 'This app needs access to your photo library to let you select images for your memes.';

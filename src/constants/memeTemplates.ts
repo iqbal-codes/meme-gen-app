@@ -1,9 +1,9 @@
-import { MemeTemplate } from "@/types";
+import { MemeTemplate } from '@/types';
 
 export const MEME_TEMPLATES: MemeTemplate[] = [
   {
     name: 'Drake Hotline Bling',
-    imageUrl: 'https://imgflip.com/s/meme/Drake-Hotline-Bling.jpg'
+    imageUrl: 'https://imgflip.com/s/meme/Drake-Hotline-Bling.jpg',
   },
   {
     name: 'One Does Not Simply',

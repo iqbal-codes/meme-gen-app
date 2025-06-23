@@ -1,4 +1,6 @@
-import React, { useRef, useCallback, useState, useLayoutEffect } from 'react';
+import React, {
+  useRef, useCallback, useState, useLayoutEffect,
+} from 'react';
 import {
   Image,
   Text,
@@ -9,10 +11,13 @@ import {
 } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import { CanvasElement } from '@/types';
+import {
+  CanvasElement, FontFamily, FontStyle, FontWeight,
+} from '@/types';
 import useElementGestures from './hooks/useElementGestures';
 import styles from './styles';
 import { useElementDimensions } from '@/hooks';
+import { getFont } from '@/utils/fontUtils';
 
 interface DraggableElementProps {
   element: CanvasElement;
@@ -68,12 +73,44 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
     event.stopPropagation();
   };
 
+  // Create font style from fontUtils
+  const getFontStyle = useCallback(() => {
+    if (element.type === 'text' && element.style) {
+      const {
+        fontFamily,
+        fontWeight,
+        fontStyle: fontStyleProp,
+        ...otherStyles
+      } = element.style;
+
+      // Use fontUtils if font properties are specified
+      if (fontFamily || fontWeight || fontStyleProp) {
+        const fontUtilsStyle = getFont(
+          (fontFamily as FontFamily) || 'nunito', // default font
+          (fontWeight as FontWeight) || 'regular', // default weight
+          (fontStyleProp as FontStyle) || 'normal', // default style
+        );
+
+        return {
+          ...fontUtilsStyle,
+          ...otherStyles, // Apply other custom styles
+        };
+      }
+
+      // Return original style if no font properties
+      return element.style;
+    }
+
+    return element.style;
+  }, [element.style, element.type]);
+
   const renderContent = useCallback(() => {
     if (element.type === 'text') {
-      if (isEditing)
+      const textStyle = getFontStyle() as TextStyle;
+      if (isEditing) {
         return (
           <TextInput
-            style={[styles.text, styles.bordered, element.style as TextStyle]}
+            style={[styles.text, styles.bordered, textStyle]}
             value={element.text}
             onChangeText={onUpdateText}
             multiline
@@ -82,20 +119,21 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
             onLayout={onLayout}
           />
         );
+      }
 
       return (
         <Text
           style={[
             styles.text,
             isSelecting && styles.bordered,
-            element.style as TextStyle,
+            textStyle,
           ]}
           onLayout={onLayout}
         >
           {element.text}
         </Text>
       );
-    } else if (element.type === 'image') {
+    } if (element.type === 'image') {
       return (
         <View style={[styles.imageContainer, isSelecting && styles.bordered]}>
           <Image
@@ -114,7 +152,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
       );
     }
     return null;
-  }, [element, isEditing, isSelecting, onLayout]);
+  }, [element, isEditing, isSelecting, onLayout, getFontStyle]);
 
   return (
     <GestureDetector gesture={combinedGesture}>

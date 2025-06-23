@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
-import { SIZING, FONT, COLORS, NO_PADDING } from '@/constants';
+import {
+  SIZING, FONT, COLORS, NO_PADDING,
+} from '@/constants';
 
 export default StyleSheet.create({
   draggable: {

@@ -1,5 +1,7 @@
 import { StyleSheet, Platform } from 'react-native';
-import { BOX_SHADOWS, COLORS, RADIUS, SIZING } from '@/constants';
+import {
+  BOX_SHADOWS, COLORS, RADIUS, SIZING,
+} from '@/constants';
 
 export default StyleSheet.create({
   rootContainer: {

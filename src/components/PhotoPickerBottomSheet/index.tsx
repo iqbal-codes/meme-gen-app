@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image, FlatList, Pressable } from 'react-native';
 
+import { PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 import { BaseBottomSheet } from '@/components';
 import styles from './styles';
-import { PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 
 interface PhotoPickerBottomSheetProps {
   visible: boolean;
@@ -29,7 +29,7 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
       <Image
         source={{ uri: item.node.image.uri }}
         style={styles.photoImage}
-        resizeMode='center'
+        resizeMode="center"
       />
     </Pressable>
   );

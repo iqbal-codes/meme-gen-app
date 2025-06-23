@@ -12,7 +12,9 @@ import {
 import Icon from '@react-native-vector-icons/lucide';
 import styles from './styles';
 import { COLORS, RADIUS, FONT } from '@/constants/theme';
-import { ButtonVariant, ButtonSize, ButtonRounded, AllIconProps } from '@/types';
+import {
+  ButtonVariant, ButtonSize, ButtonRounded, AllIconProps,
+} from '@/types';
 
 export interface ButtonProps {
   onPress?: (e: GestureResponderEvent) => void;
@@ -100,7 +102,7 @@ const Button: React.FC<ButtonProps> = ({
   // Get icon color based on variant or custom color
   const getIconColor = () => {
     if (iconColor) return iconColor;
-    
+
     switch (variant) {
       case 'primary':
         return COLORS.primaryForeground;
