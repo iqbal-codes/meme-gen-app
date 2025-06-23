@@ -9,9 +9,10 @@ import {
   TextStyle,
   GestureResponderEvent,
 } from 'react-native';
+import Icon from '@react-native-vector-icons/lucide';
 import styles from './styles';
-import { COLORS, RADIUS } from '@/constants/theme';
-import { ButtonVariant, ButtonSize, ButtonRounded } from '@/types';
+import { COLORS, RADIUS, FONT } from '@/constants/theme';
+import { ButtonVariant, ButtonSize, ButtonRounded, AllIconProps } from '@/types';
 
 export interface ButtonProps {
   onPress?: (e: GestureResponderEvent) => void;
@@ -21,9 +22,10 @@ export interface ButtonProps {
   block?: boolean;
   loading?: boolean;
   disabled?: boolean;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
-  icon?: React.ReactNode; // For icon-only buttons
+  leftIcon?: AllIconProps;
+  rightIcon?: AllIconProps;
+  icon?: AllIconProps; // For icon-only buttons
+  iconColor?: string; // Custom icon color
   iconOnly?: boolean; // Explicitly make it icon-only (square)
   rounded?: ButtonRounded; // Control border radius
   enableShadow?: boolean; // Disable shadow
@@ -42,6 +44,7 @@ const Button: React.FC<ButtonProps> = ({
   leftIcon,
   rightIcon,
   icon,
+  iconColor,
   iconOnly = false,
   rounded = 'md',
   enableShadow = false,
@@ -94,6 +97,47 @@ const Button: React.FC<ButtonProps> = ({
     return textStyles;
   };
 
+  // Get icon color based on variant or custom color
+  const getIconColor = () => {
+    if (iconColor) return iconColor;
+    
+    switch (variant) {
+      case 'primary':
+        return COLORS.primaryForeground;
+      case 'secondary':
+        return COLORS.secondaryForeground;
+      case 'outline':
+      case 'ghost':
+        return COLORS.foreground;
+      case 'danger':
+        return COLORS.destructiveForeground;
+      default:
+        return COLORS.foreground;
+    }
+  };
+
+  // Get icon size based on button size
+  const getIconSize = () => {
+    switch (size) {
+      case 'small':
+        return FONT.sizes.sm;
+      case 'medium':
+        return FONT.sizes.base;
+      case 'large':
+        return FONT.sizes.lg;
+      default:
+        return FONT.sizes.base;
+    }
+  };
+
+  const renderIcon = (iconName: AllIconProps) => (
+    <Icon
+      name={iconName}
+      size={getIconSize()}
+      color={getIconColor()}
+    />
+  );
+
   const renderContent = () => {
     if (loading) {
       return (
@@ -109,14 +153,18 @@ const Button: React.FC<ButtonProps> = ({
     }
 
     if (isIconOnly) {
-      return <View style={styles.iconOnlyContainer}>{icon}</View>;
+      return (
+        <View style={styles.iconOnlyContainer}>
+          {icon && renderIcon(icon)}
+        </View>
+      );
     }
 
     return (
       <View style={styles.contentContainer}>
-        {leftIcon && <View>{leftIcon}</View>}
+        {leftIcon && renderIcon(leftIcon)}
         {title && <Text style={getTextStyle()}>{title}</Text>}
-        {rightIcon && <View>{rightIcon}</View>}
+        {rightIcon && renderIcon(rightIcon)}
       </View>
     );
   };

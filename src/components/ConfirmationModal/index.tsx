@@ -76,7 +76,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                   onPress={handleCancel}
                   style={styles.button}
                   rounded="full"
-                  size="small"
                 />
               )}
               <Button
@@ -85,7 +84,6 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                 onPress={onConfirm}
                 style={[styles.button, showCancel && styles.confirmButton]}
                 rounded="full"
-                size="small"
               />
             </View>
           </View>

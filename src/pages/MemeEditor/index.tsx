@@ -7,6 +7,8 @@ import {
   PermissionsAndroid,
   PixelRatio,
   ImageURISource,
+  TextStyle,
+  Image,
 } from 'react-native';
 import {
   GestureHandlerRootView,
@@ -27,11 +29,10 @@ import {
   Button,
 } from '@/components';
 import styles from '@/styles';
-import { CanvasElement, ElementStyle } from '@/types';
+import { CanvasElement } from '@/types';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, SCREEN_WIDTH, SIZING } from '@/constants';
+import { SCREEN_WIDTH, SIZING } from '@/constants';
 import { useImageHeight } from '@/hooks';
-import Icons from '@react-native-vector-icons/lucide';
 import { ensureCameraRollPermission } from '@/utils';
 import { useConfirmation } from '@/contexts';
 // We will create this component in the next step
@@ -69,7 +70,6 @@ const MemeEditorPage: React.FC = () => {
     elementId: string,
     newPosition?: { x: number; y: number },
   ) => {
-    console.log(elementId, newPosition);
     if (newPosition) {
       setElements(prev => ({
         ...prev,
@@ -93,16 +93,8 @@ const MemeEditorPage: React.FC = () => {
     }));
   };
 
-  // Function to update image content
-  const onUpdateImage = (elementId: string, newImageUri: string) => {
-    setElements(prev => ({
-      ...prev,
-      [elementId]: { ...prev[elementId], imageUri: newImageUri },
-    }));
-  };
-
   // Function to update text style
-  const onUpdateElementStyle = (elementId: string, newStyle: ElementStyle) => {
+  const onUpdateElementStyle = (elementId: string, newStyle: TextStyle) => {
     setElements(prev => ({
       ...prev,
       [elementId]: { ...prev[elementId], style: newStyle },
@@ -111,21 +103,19 @@ const MemeEditorPage: React.FC = () => {
 
   // Function to delete an element
   const onDeleteElement = (elementId: string) => {
-    console.log('masuk sini');
+    clearSelection();
     const tempResult = { ...elements };
     delete tempResult[elementId];
     setElements(tempResult);
   };
 
-  // Function to handle canvas press (click outside)
-  const handleCanvasPress = () => {
-    // Only reset editing state if we're not in the middle of a pinch gesture
-    if (editingId && scale.value === 1) {
-      setEditingId(undefined);
-    }
+  const clearSelection = () => {
+    setSelectedId(undefined);
+    setEditingId(undefined);
   };
 
   const addText = () => {
+    clearSelection();
     const newTextElement: CanvasElement = {
       id: String(Date.now()),
       type: 'text',
@@ -139,25 +129,30 @@ const MemeEditorPage: React.FC = () => {
         fontStyle: 'normal',
         textDecorationLine: 'none',
         fontSize: 24,
+        textAlign: 'center',
       },
     };
     setElements(prev => ({ ...prev, [newTextElement.id]: newTextElement }));
   };
 
   const handlePhotoSelect = (imageUri: string) => {
-    const newImageElement: CanvasElement = {
-      id: String(Date.now()),
-      type: 'image',
-      imageUri,
-      x: 0,
-      y: 0,
-      width: 150,
-      height: 150,
-    };
-    setElements(prev => ({ ...prev, [newImageElement.id]: newImageElement }));
+    Image.getSize(imageUri, (width, height) => {
+      const aspectRatio = width / height;
+      const newImageElement: CanvasElement = {
+        id: String(Date.now()),
+        type: 'image',
+        imageUri,
+        x: 0,
+        y: 0,
+        width: 150 * aspectRatio,
+        height: 150,
+      };
+      setElements(prev => ({ ...prev, [newImageElement.id]: newImageElement }));
+    });
   };
 
   const addImage = async () => {
+    clearSelection();
     try {
       // Check and request permissions for Android
       const hasPermission = await ensureCameraRollPermission();
@@ -206,9 +201,7 @@ const MemeEditorPage: React.FC = () => {
   const oneTapGesture = Gesture.Tap()
     .runOnJS(true)
     .onStart(() => {
-      setSelectedId(undefined);
-      setEditingId(undefined);
-      handleCanvasPress();
+      clearSelection();
     });
 
   // Pinch gesture for zooming
@@ -282,38 +275,65 @@ const MemeEditorPage: React.FC = () => {
   }, []);
 
   const onSave = async () => {
+    clearSelection();
     const targetPixelCount = 1080; // If you want full HD pictures
     const pixelRatio = PixelRatio.get(); // The pixel ratio of the device
-    // pixels * pixelRatio = targetPixelCount, so pixels = targetPixelCount / pixelRatio
-    const pixels = targetPixelCount / pixelRatio;
+
+    // Calculate canvas dimensions
+    const canvasWidth = SCREEN_WIDTH - SIZING[6];
+    const canvasHeight = backgroundImage
+      ? imageHeight
+      : SCREEN_WIDTH - SIZING[6];
+
+    // Calculate aspect ratio
+    const aspectRatio = canvasWidth / canvasHeight;
+
+    // Calculate dimensions maintaining aspect ratio
+    let captureWidth, captureHeight;
+    if (aspectRatio > 1) {
+      // Landscape: width is larger
+      captureWidth = targetPixelCount / pixelRatio;
+      captureHeight = captureWidth / aspectRatio;
+    } else {
+      // Portrait or square: height is larger or equal
+      captureHeight = targetPixelCount / pixelRatio;
+      captureWidth = captureHeight * aspectRatio;
+    }
 
     const result = await captureRef(viewShotRef, {
       result: 'tmpfile',
-      height: pixels,
-      width: pixels,
+      height: captureHeight,
+      width: captureWidth,
       quality: 1,
-      format: 'png',
+      format: 'jpg',
     });
 
     // Save to gallery
-    const saveResult = await CameraRoll.saveAsset(result, {
+    await CameraRoll.saveAsset(result, {
       type: 'photo',
       album: 'Memes', // Optional: create/save to a specific album
     });
 
-    console.log({ result });
+    showConfirmation({
+      title: 'Meme saved',
+      message: 'Meme saved to gallery!',
+      onConfirm: () => {
+        clearSelection();
+      },
+      showCancel: false,
+    });
   };
 
   // Function to clear all elements on canvas
   const clearCanvas = () => {
+    clearSelection();
     showConfirmation({
       title: 'Clear Canvas',
       message:
-        'Are you sure you want to clear the canvas? This will delete all elements on the canvas.',
+        'Are you sure you want to clear the canvas? This will clear the canvas.',
       onConfirm: () => {
         setElements({});
-        setSelectedId(undefined);
-        setEditingId(undefined);
+        setBackgroundImage(undefined);
       },
     });
   };
@@ -334,15 +354,13 @@ const MemeEditorPage: React.FC = () => {
             <Button
               rounded="full"
               variant="secondary"
-              title="Background"
-              enableShadow
+              title="Template"
               onPress={() => setShowImageSelection(true)}
             />
             <Button
               rounded="full"
               variant="secondary"
               title="Clear All"
-              enableShadow
               disabled={!hasUnsavedChanges}
               onPress={clearCanvas}
             />
@@ -351,8 +369,7 @@ const MemeEditorPage: React.FC = () => {
             variant="primary"
             title="Save"
             rounded="full"
-            enableShadow
-            rightIcon={<Icons name="save" color={COLORS.secondary} size={20} />}
+            rightIcon="save"
             disabled={!hasUnsavedChanges}
             onPress={onSave}
           />
@@ -418,17 +435,15 @@ const MemeEditorPage: React.FC = () => {
             <Button
               rounded="full"
               variant="secondary"
-              icon={<Icons name="type" color={COLORS.primary} size={20} />}
+              icon="type"
               onPress={addText}
-              enableShadow
               size="large"
             />
             <Button
               rounded="full"
               variant="secondary"
               size="large"
-              icon={<Icons name="image" color={COLORS.primary} size={20} />}
-              enableShadow
+              icon="image"
               onPress={addImage}
             />
           </View>
@@ -439,29 +454,23 @@ const MemeEditorPage: React.FC = () => {
                 rounded="full"
                 size="large"
                 variant="primary"
-                icon={
-                  <Icons name="paintbrush" color={COLORS.accent} size={20} />
-                }
-                enableShadow
+                icon="paintbrush"
                 onPress={() => setShowStyleElement(true)}
               />
               <Button
                 rounded="full"
                 variant="secondary"
                 size="large"
-                icon={<Icons name="copy" color={COLORS.primary} size={20} />}
-                enableShadow
+                icon="copy"
                 onPress={() => onCopyElement(selectedId)}
               />
               <Button
                 rounded="full"
                 size="large"
                 variant="danger"
-                icon={<Icons name="trash-2" color={COLORS.accent} size={20} />}
-                enableShadow
+                icon="trash-2"
                 onPress={() => {
                   onDeleteElement(selectedId);
-                  setSelectedId(undefined);
                 }}
               />
             </View>

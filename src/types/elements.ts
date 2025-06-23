@@ -1,15 +1,4 @@
-import { StyleProp, TextStyle } from 'react-native';
-
-// Element-related types
-export interface ElementStyle {
-  color?: string;
-  fontWeight?: StyleProp<TextStyle['fontWeight']>;
-  fontStyle?: StyleProp<TextStyle['fontStyle']>;
-  textDecorationLine?: StyleProp<TextStyle['textDecorationLine']>;
-  fontSize?: number;
-  backgroundColor?: string;
-  opacity: number;
-}
+import { TextStyle } from 'react-native';
 
 export interface ElementDimensions {
   width: number;
@@ -30,7 +19,7 @@ export type CanvasElement = {
   y: number;
   width?: number; // For image elements
   height?: number; // For image elements
-  style?: ElementStyle; // Optional for image elements
+  style?: TextStyle; // Optional for image elements
   scale?: number;
   dimensions?: ElementDimensions;
 };

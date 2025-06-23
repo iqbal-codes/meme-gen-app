@@ -41,7 +41,7 @@ const BaseBottomSheet: React.FC<BaseBottomSheetProps> = ({
             {headerAction || (
               <Button
                 variant="ghost"
-                icon={<Icons name="x" color={COLORS.primary} size={24} />}
+                icon="x"
                 onPress={onClose}
               />
             )}

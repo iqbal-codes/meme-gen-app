@@ -1,40 +1,38 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, SIZING } from '@/constants';
+import { COLORS, FONT, SIZING } from '@/constants';
 import { calculateFlatListItemWidth } from '@/utils';
 
-const photoSize = calculateFlatListItemWidth({
+const photoWidth = calculateFlatListItemWidth({
   numColumns: 3,
-  containerPadding: SIZING[3],
-  gap: SIZING[2],
+  gap: SIZING[1],
 });
 
 export default StyleSheet.create({
   columnWrapper: {
-    gap: SIZING[2],
+    gap: SIZING[1],
   },
   container: {
-    gap: SIZING[2],
-    padding: SIZING[3],
+    gap: SIZING[1],
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: SIZING[2],
+    marginBottom: SIZING[1],
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: FONT.weights.bold,
     color: COLORS.text,
   },
   photoOption: {
-    width: photoSize,
-    height: photoSize,
+    width: photoWidth,
+    height: photoWidth, // Keep container square for consistent grid
     overflow: 'hidden',
     backgroundColor: COLORS.secondary,
   },
   photoImage: {
-    width: photoSize,
-    height: photoSize,
+    width: '100%',
+    height: '100%',
   },
 });

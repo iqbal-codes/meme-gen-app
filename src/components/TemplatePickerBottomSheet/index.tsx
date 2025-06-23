@@ -58,7 +58,7 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
     <BaseBottomSheet
       visible={visible}
       onClose={onClose}
-      title="Select Background"
+      title="Select Template"
       maxHeight="70%"
       minHeight="50%"
     >

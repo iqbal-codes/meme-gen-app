@@ -1,5 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextStyle as RNTextStyle } from 'react-native';
+import React, { useState, useEffect, ReactNode } from 'react';
+import {
+  View,
+  Text,
+  TextStyle as RNTextStyle,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import Slider from '@react-native-community/slider';
 import { Button, BaseBottomSheet } from '@/components';
 
@@ -7,9 +13,10 @@ import styles from './styles';
 import { ScrollView } from 'react-native-gesture-handler';
 import Icons from '@react-native-vector-icons/lucide';
 import { COLORS } from '@/constants';
-import { CanvasElement, ElementStyle } from '@/types';
+import { AllIconProps, CanvasElement } from '@/types';
+import Icon from '@react-native-vector-icons/lucide';
 
-const DEFAULT_TEXT_STYLE: ElementStyle = {
+const DEFAULT_TEXT_STYLE: TextStyle = {
   color: '#000000',
   fontWeight: 'normal',
   fontStyle: 'normal',
@@ -19,7 +26,7 @@ const DEFAULT_TEXT_STYLE: ElementStyle = {
   opacity: 1,
 };
 
-const DEFAULT_IMAGE_STYLE: ElementStyle = {
+const DEFAULT_IMAGE_STYLE: ViewStyle = {
   opacity: 1,
 };
 
@@ -27,11 +34,11 @@ interface ElementStyleBottomSheetProps {
   visible: boolean;
   onClose: () => void;
   element?: CanvasElement;
-  currentStyle?: ElementStyle;
-  onStyleChange: (style: ElementStyle) => void;
+  currentStyle?: TextStyle;
+  onStyleChange: (style: TextStyle) => void;
 }
 
-const colors = [
+const COLOR_OPTIONS = [
   '#000000', // Black
   '#FFFFFF', // White
   '#FF0000', // Red
@@ -44,7 +51,7 @@ const colors = [
   '#800080', // Purple
 ];
 
-const highlightColors = ['transparent', ...colors];
+const COLOR_WITH_TRANSPARENT_OPTIONS = ['transparent', ...COLOR_OPTIONS];
 
 const fontWeights: { title: string; value: RNTextStyle['fontWeight'] }[] = [
   { title: 'Normal', value: 'normal' },
@@ -65,6 +72,15 @@ const textDecorations: {
   { title: 'Line Through', value: 'line-through' },
 ];
 
+const textAigns: {
+  icon: AllIconProps;
+  value: RNTextStyle['textAlign'];
+}[] = [
+  { value: 'left', icon: 'align-left' },
+  { value: 'center', icon: 'align-center' },
+  { value: 'right', icon: 'align-right' },
+];
+
 const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
   visible,
   onClose,
@@ -75,7 +91,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
   const isImageElement = element?.type === 'image';
 
   const defaultStyle = isTextElement ? DEFAULT_TEXT_STYLE : DEFAULT_IMAGE_STYLE;
-  const [localStyle, setLocalStyle] = useState<ElementStyle>(
+  const [localStyle, setLocalStyle] = useState<TextStyle>(
     element?.style || defaultStyle,
   );
 
@@ -85,7 +101,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
     }
   }, [visible, element?.style, defaultStyle]);
 
-  const updateLocalStyle = (updates: Partial<ElementStyle>) => {
+  const updateLocalStyle = (updates: Partial<TextStyle>) => {
     setLocalStyle(prev => ({ ...prev, ...updates }));
   };
 
@@ -128,7 +144,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
               style={styles.slider}
               minimumValue={0}
               maximumValue={1}
-              value={localStyle.opacity}
+              value={localStyle.opacity as number}
               onValueChange={value => updateLocalStyle({ opacity: value })}
               minimumTrackTintColor={COLORS.primary}
               maximumTrackTintColor={COLORS.mutedForeground}
@@ -145,7 +161,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>Color</Text>
               <View style={styles.colorGrid}>
-                {colors.map(color => (
+                {COLOR_OPTIONS.map(color => (
                   <Button
                     key={color}
                     variant={localStyle.color === color ? 'primary' : 'outline'}
@@ -164,13 +180,13 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
 
             {/* Text Highlight Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Text Highlight</Text>
+              <Text style={styles.sectionTitle}>Highlight</Text>
               <View style={styles.colorGrid}>
-                {highlightColors.map(bgColor => (
+                {COLOR_WITH_TRANSPARENT_OPTIONS.map(color => (
                   <Button
-                    key={bgColor}
+                    key={color}
                     variant={
-                      localStyle.backgroundColor === bgColor
+                      localStyle.backgroundColor === color
                         ? 'primary'
                         : 'outline'
                     }
@@ -178,21 +194,35 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     iconOnly
                     style={[
                       styles.colorOption,
-                      { backgroundColor: bgColor },
-                      localStyle.backgroundColor === bgColor &&
+                      { backgroundColor: color },
+                      localStyle.backgroundColor === color &&
                         styles.selectedColor,
                     ]}
-                    icon={
-                      bgColor === 'transparent' && (
-                        <Icons
-                          name="ban"
-                          size={24}
-                          color={COLORS.destructive}
-                        />
-                      )
+                    icon={color === 'transparent' ? 'ban' : undefined}
+                    onPress={() => updateLocalStyle({ backgroundColor: color })}
+                  />
+                ))}
+              </View>
+            </View>
+
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Align</Text>
+              <View style={styles.buttonRow}>
+                {textAigns.map(align => (
+                  <Button
+                    key={align.value}
+                    variant={
+                      localStyle.textAlign === align.value
+                        ? 'primary'
+                        : 'outline'
                     }
+                    icon={align.icon}
+                    rounded="full"
+                    textStyle={{ textAlign: align.value }}
                     onPress={() =>
-                      updateLocalStyle({ backgroundColor: bgColor })
+                      updateLocalStyle({
+                        textAlign: align.value,
+                      })
                     }
                   />
                 ))}
@@ -201,7 +231,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
 
             {/* Font Weight Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Font Weight</Text>
+              <Text style={styles.sectionTitle}>Weight</Text>
               <View style={styles.buttonRow}>
                 {fontWeights.map(weight => (
                   <Button
@@ -226,7 +256,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
 
             {/* Font Style Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Font Style</Text>
+              <Text style={styles.sectionTitle}>Style</Text>
               <View style={styles.buttonRow}>
                 {fontStyles.map(style => (
                   <Button
@@ -249,7 +279,7 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
 
             {/* Text Decoration Section */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Text Decoration</Text>
+              <Text style={styles.sectionTitle}>Decoration</Text>
               <View style={styles.buttonRow}>
                 {textDecorations.map(decoration => (
                   <Button
@@ -261,14 +291,10 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
                     }
                     title={decoration.title}
                     rounded="full"
-                    textStyle={
-                      decoration.value !== 'none'
-                        ? { textDecorationLine: decoration.value as any }
-                        : undefined
-                    }
+                    textStyle={{ textDecorationLine: decoration.value }}
                     onPress={() =>
                       updateLocalStyle({
-                        textDecorationLine: decoration.value as any,
+                        textDecorationLine: decoration.value,
                       })
                     }
                   />

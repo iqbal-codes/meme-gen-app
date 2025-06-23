@@ -5,8 +5,8 @@ import {
   SIZING,
   FONT,
   BOX_SHADOWS,
-} from '../../constants/theme';
-import { states } from '../../utils/styleUtils';
+} from '@/constants';
+import { states } from '@/utils';
 
 export default StyleSheet.create({
   // Base button style
@@ -20,24 +20,24 @@ export default StyleSheet.create({
   // Variants with shadow
   primaryButton: {
     backgroundColor: COLORS.primary,
-    boxShadow: BOX_SHADOWS.md,
+    boxShadow: BOX_SHADOWS.sm,
   },
   secondaryButton: {
-    backgroundColor: COLORS.background,
-    boxShadow: BOX_SHADOWS.md,
+    backgroundColor: COLORS.secondary,
+    boxShadow: BOX_SHADOWS.sm,
   },
   outlineButton: {
     backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.primary,
-    boxShadow: BOX_SHADOWS.md,
+    boxShadow: BOX_SHADOWS.sm,
   },
   ghostButton: {
     backgroundColor: 'transparent',
   },
   dangerButton: {
     backgroundColor: COLORS.destructive,
-    boxShadow: BOX_SHADOWS.md,
+    boxShadow: BOX_SHADOWS.sm,
   },
 
   // Variants without shadow
@@ -103,7 +103,8 @@ export default StyleSheet.create({
   // Text styles
   text: {
     fontSize: FONT.sizes.base,
-    fontWeight: '500',
+    fontWeight: FONT.weights.medium,
+    letterSpacing: 0.5,
     textAlign: 'center',
   },
   primaryText: {

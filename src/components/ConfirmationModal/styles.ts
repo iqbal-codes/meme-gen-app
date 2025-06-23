@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { COLORS, RADIUS, SIZING, BOX_SHADOWS } from '@/constants';
+import { COLORS, RADIUS, SIZING, BOX_SHADOWS, FONT } from '@/constants';
 
 export default StyleSheet.create({
   overlay: {
@@ -17,17 +17,17 @@ export default StyleSheet.create({
     boxShadow: BOX_SHADOWS.md,
   },
   content: {
-    padding: SIZING[4], // 24
+    padding: SIZING[3], // 24
   },
   title: {
-    fontSize: 18,
-    fontWeight: '600',
+    fontSize: FONT.sizes['2xl'],
+    fontWeight: FONT.weights.semibold,
     color: COLORS.foreground,
     marginBottom: SIZING[2], // 8
     textAlign: 'center',
   },
   message: {
-    fontSize: 14,
+    fontSize: 16,
     color: COLORS.mutedForeground,
     lineHeight: 20,
     textAlign: 'center',

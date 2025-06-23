@@ -29,7 +29,7 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
       <Image
         source={{ uri: item.node.image.uri }}
         style={styles.photoImage}
-        resizeMode="cover"
+        resizeMode='center'
       />
     </Pressable>
   );

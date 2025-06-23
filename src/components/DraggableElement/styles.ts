@@ -12,8 +12,6 @@ export default StyleSheet.create({
   text: {
     ...NO_PADDING,
     fontSize: FONT.sizes['2xl'],
-    fontWeight: FONT.weights.bold,
-    textAlign: 'center',
     color: COLORS.foreground,
     paddingLeft: SIZING[2],
     paddingRight: SIZING[2],

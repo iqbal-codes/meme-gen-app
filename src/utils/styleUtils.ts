@@ -107,10 +107,10 @@ export const sizes = {
 // Common state styles for components
 export const states = {
   disabled: {
-    opacity: 0.5,
+    opacity: 0.6,
   },
   loading: {
-    opacity: 0.7,
+    opacity: 0.8,
   },
   focused: {
     borderColor: COLORS.ring,
@@ -118,20 +118,6 @@ export const states = {
   error: {
     borderColor: COLORS.destructive,
   },
-};
-
-// Helper to create component styles with variants
-export const createVariantStyles = <T extends Record<string, any>>(
-  baseStyle: ViewStyle,
-  variantStyles: T,
-): Record<keyof T, ViewStyle> => {
-  const styles: Record<string, ViewStyle> = {};
-
-  Object.keys(variantStyles).forEach(key => {
-    styles[key] = StyleSheet.flatten([baseStyle, variantStyles[key]]);
-  });
-
-  return styles as Record<keyof T, ViewStyle>;
 };
 
 /**
