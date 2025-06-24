@@ -41,6 +41,13 @@ export default StyleSheet.create({
     // boxShadow: BOX_SHADOWS.md,
     // boxShadow: BOX_SHADOWS.xl,
   },
+  controlsContainer: {
+    gap: SIZING[3],
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
   // Guide lines for alignment
   verticalLine: {
     position: 'absolute',

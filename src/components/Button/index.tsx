@@ -31,6 +31,7 @@ export interface ButtonProps {
   enableShadow?: boolean; // Disable shadow
   style?: StyleProp<ViewStyle>;
   textStyle?: StyleProp<TextStyle>;
+  testID?: string
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -50,6 +51,7 @@ const Button: React.FC<ButtonProps> = ({
   enableShadow = false,
   style,
   textStyle,
+  testID,
 }) => {
   // Determine if this is an icon-only button
   const isIconOnly = iconOnly || (icon && !title);
@@ -161,6 +163,7 @@ const Button: React.FC<ButtonProps> = ({
       onPress={onPress}
       disabled={disabled || loading}
       activeOpacity={0.7}
+      testID={testID}
     >
       {renderContent()}
     </TouchableOpacity>

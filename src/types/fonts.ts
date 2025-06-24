@@ -1,7 +1,6 @@
 export type FontFamily =
   | 'montserrat'
   | 'baskerville'
-  | 'fredoka'
   | 'nunito'
   | 'roboto';
 

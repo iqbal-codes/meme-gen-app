@@ -17,6 +17,7 @@ export const DEFAULT_TEXT_ELEMENT: CanvasElement = {
     textDecorationLine: 'none',
     fontSize: 24,
     textAlign: 'center',
+    textShadowColor: 'transparent',
   },
 };
 
@@ -38,6 +39,7 @@ export const DEFAULT_TEXT_STYLE: TextStyle = {
   textDecorationLine: 'none',
   fontSize: 24,
   backgroundColor: 'transparent',
+  textShadowColor: 'transparent',
   opacity: 1,
 };
 
@@ -114,11 +116,10 @@ export const FONT_FAMILY_OPTIONS: {
   { title: 'Montserrat', value: 'montserrat' },
   { title: 'Baskerville', value: 'baskerville' },
   { title: 'Roboto', value: 'roboto' },
-  { title: 'Fredoka', value: 'fredoka' },
 ];
 
 export const FONT_WEIGHT_OPTIONS: { title: string; value: TextStyle['fontWeight'] }[] = [
-  { title: 'Normal', value: 'normal' },
+  { title: 'Regular', value: 'regular' },
   { title: 'Bold', value: 'bold' },
 ];
 
@@ -145,6 +146,10 @@ export const COLOR_WITH_TRANSPARENT_OPTIONS = ['transparent', ...COLOR_OPTIONS];
 export type EditorConfig = typeof EDITOR_CONFIG;
 
 export const MEME_TEMPLATES: MemeTemplate[] = [
+  {
+    name: 'Troll Face',
+    imageUrl: 'https://i.imgflip.com/1kzr.jpg',
+  },
   {
     name: 'Drake Hotline Bling',
     imageUrl: 'https://imgflip.com/s/meme/Drake-Hotline-Bling.jpg',

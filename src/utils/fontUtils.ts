@@ -9,7 +9,6 @@ const FONT_CONFIG = {
     baskerville: 'Baskerville',
     nunito: 'Nunito',
     roboto: 'Roboto',
-    fredoka: 'Fredoka',
   },
   // Static fonts (require specific font family names)
   static: {
@@ -35,26 +34,6 @@ const FONT_CONFIG = {
         italic: 'Montserrat-ExtraBoldItalic',
       },
       black: { normal: 'Montserrat-Black', italic: 'Montserrat-BlackItalic' },
-    },
-    fredoka: {
-      thin: { normal: 'Fredoka-Thin', italic: 'Fredoka-ThinItalic' },
-      extralight: {
-        normal: 'Fredoka-ExtraLight',
-        italic: 'Fredoka-ExtraLightItalic',
-      },
-      light: { normal: 'Fredoka-Light', italic: 'Fredoka-LightItalic' },
-      regular: { normal: 'Fredoka-Regular', italic: 'Fredoka-Italic' },
-      medium: { normal: 'Fredoka-Medium', italic: 'Fredoka-MediumItalic' },
-      semibold: {
-        normal: 'Fredoka-SemiBold',
-        italic: 'Fredoka-SemiBoldItalic',
-      },
-      bold: { normal: 'Fredoka-Bold', italic: 'Fredoka-BoldItalic' },
-      extrabold: {
-        normal: 'Fredoka-ExtraBold',
-        italic: 'Fredoka-ExtraBoldItalic',
-      },
-      black: { normal: 'Fredoka-Black', italic: 'Fredoka-BlackItalic' },
     },
     nunito: {
       thin: { normal: 'Nunito-Thin', italic: 'Nunito-ThinItalic' },

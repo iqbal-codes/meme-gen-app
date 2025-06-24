@@ -234,15 +234,7 @@ const MemeEditorPage = () => {
     <GestureHandlerRootView style={styles.rootContainer}>
       <SafeAreaView style={styles.container}>
         <View style={styles.controls}>
-          <View
-            style={{
-              gap: SIZING[3],
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'flex-start',
-              alignItems: 'center',
-            }}
-          >
+          <View style={styles.controlsContainer}>
             <Button
               rounded="full"
               variant="secondary"

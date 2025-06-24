@@ -1,7 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {
-  SIZING, FONT, COLORS, NO_PADDING,
-} from '@/constants';
+import { SIZING, FONT, COLORS, NO_PADDING } from '@/constants';
 
 export default StyleSheet.create({
   draggable: {
@@ -17,6 +15,8 @@ export default StyleSheet.create({
     color: COLORS.foreground,
     paddingLeft: SIZING[2],
     paddingRight: SIZING[2],
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: SIZING[1],
   },
   bordered: {
     borderWidth: 1,

@@ -17,21 +17,24 @@ const ColorGrid: React.FC<ColorGridProps> = ({
   showTransparentIcon = false,
 }) => (
   <View style={styles.colorGrid}>
-    {colors.map((color) => (
-      <Button
-        key={color}
-        variant={selectedColor === color ? 'primary' : 'outline'}
-        rounded="full"
-        iconOnly
-        style={[
-          styles.colorOption,
-          { backgroundColor: color },
-          selectedColor === color && styles.selectedColor,
-        ]}
-        icon={color === 'transparent' && showTransparentIcon ? 'ban' : undefined}
-        onPress={() => onColorSelect(color)}
-      />
-    ))}
+    {colors.map(color => {
+      return (
+        <Button
+          key={color}
+          variant={selectedColor === color ? 'primary' : 'outline'}
+          rounded="full"
+          iconOnly
+          style={[
+            styles.colorOption,
+            { backgroundColor: color },
+            selectedColor === color && styles.selectedColor,
+          ]}
+          icon={color === 'transparent' && showTransparentIcon ? 'ban' : undefined}
+          iconColor={color === 'transparent' ? 'red' : undefined}
+          onPress={() => onColorSelect(color)}
+        />
+      );
+    })}
   </View>
 );
 

@@ -104,6 +104,16 @@ const ElementStyleBottomSheet: React.FC<ElementStyleBottomSheetProps> = ({
               />
             </StyleSection>
 
+            {/* Text Shadow Color Section */}
+            <StyleSection title="Shadow Color">
+              <ColorGrid
+                colors={COLOR_WITH_TRANSPARENT_OPTIONS}
+                selectedColor={localStyle.textShadowColor as string}
+                onColorSelect={color => updateLocalStyle({ textShadowColor: color })}
+                showTransparentIcon
+              />
+            </StyleSection>
+
             {/* Font Family Section */}
             <StyleSection title="Family">
               <ButtonRow

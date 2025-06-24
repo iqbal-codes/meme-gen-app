@@ -17,8 +17,6 @@ export default [
     'airbnb',
     'airbnb-typescript',
     'airbnb/hooks',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'prettier',
   ),
   {
@@ -36,10 +34,10 @@ export default [
     },
 
     rules: {
-      '@typescript-eslint/no-unsafe-assignment': 'off',
-      '@typescript-eslint/no-var-requires': 'off',
       'import/extensions': 'off',
       'no-console': 'off',
+      'react/jsx-props-no-spreading': 'off',
+      'global-require': 'off',
       'react/function-component-definition': [
         2,
         {
@@ -47,9 +45,7 @@ export default [
           unnamedComponents: 'arrow-function',
         },
       ],
-      '@typescript-eslint/no-misused-promises': 'off',
       'react/require-default-props': 'off',
-      '@typescript-eslint/no-unsafe-call': 'off'
     },
   },
 ];
