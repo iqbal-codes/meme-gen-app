@@ -15,6 +15,7 @@ const useCanvasGestures = ({ onClearSelection }: UseCanvasGesturesProps) => {
   const focalY = useSharedValue(0);
   const contextX = useSharedValue(0);
   const contextY = useSharedValue(0);
+  const contextScale = useSharedValue(1);
 
   // Double tap gesture to reset zoom
   const doubleTapGesture = Gesture.Tap()
@@ -40,12 +41,15 @@ const useCanvasGestures = ({ onClearSelection }: UseCanvasGesturesProps) => {
 
       focalX.value = event.focalX;
       focalY.value = event.focalY;
+      contextScale.value = scale.value; // Store current scale when pinch starts
     })
     .onUpdate(event => {
       'worklet';
 
-      // Limit scale between 1 and 3
-      scale.value = Math.min(Math.max(event.scale, EDITOR_CONFIG.MIN_SCALE), EDITOR_CONFIG.MAX_SCALE);
+      // Calculate new scale based on current scale and gesture scale
+      const newScale = contextScale.value * event.scale;
+      // Limit scale between MIN_SCALE and MAX_SCALE
+      scale.value = Math.min(Math.max(newScale, EDITOR_CONFIG.MIN_SCALE), EDITOR_CONFIG.MAX_SCALE);
     });
 
   // Pan gesture for looking around when zoomed
