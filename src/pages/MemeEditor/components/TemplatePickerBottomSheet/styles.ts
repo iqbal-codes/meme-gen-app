@@ -1,7 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {
-  COLORS, SIZING, FONT, RADIUS,
-} from '@/constants';
+import { COLORS, SIZING, FONT, RADIUS } from '@/constants';
 import { calculateFlatListItemWidth } from '@/utils';
 
 const imageWidth = calculateFlatListItemWidth({
@@ -11,8 +9,25 @@ const imageWidth = calculateFlatListItemWidth({
 });
 
 const styles = StyleSheet.create({
+  searchContainer: {
+    paddingHorizontal: SIZING[3],
+    paddingTop: SIZING[3],
+    paddingBottom: SIZING[2],
+  },
+  searchInput: {
+    height: 44,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: SIZING[3],
+    fontSize: FONT.sizes.sm,
+    color: COLORS.text,
+    backgroundColor: COLORS.background,
+    marginBottom: SIZING[1],
+  },
   container: {
     padding: SIZING[3],
+    paddingTop: 0, // Remove top padding since search has its own
     gap: SIZING[2],
   },
   columnWrapper: {

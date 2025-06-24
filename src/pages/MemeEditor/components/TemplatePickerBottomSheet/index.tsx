@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import {
-  Text, Image, FlatList, Pressable,
+  Text, Image, FlatList, Pressable, TextInput, View,
 } from 'react-native';
 import { BaseBottomSheet } from '@/components';
+import { COLORS } from '@/constants';
+import { useDebounce } from '@/utils';
 import styles from './styles';
 import { MEME_TEMPLATES } from '../../constants';
 import { MemeTemplate } from '@/types';
@@ -22,6 +24,20 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
   hasUnsavedChanges,
 }) => {
   const { showConfirmation } = useConfirmation();
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Use the debounce hook with 1 second delay
+  const debouncedSearchQuery = useDebounce(searchQuery, 1000);
+
+  // Filter templates based on debounced search query
+  const filteredTemplates = useMemo(() => {
+    if (!debouncedSearchQuery.trim()) {
+      return MEME_TEMPLATES;
+    }
+    return MEME_TEMPLATES.filter(template =>
+      template.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+    );
+  }, [debouncedSearchQuery]);
 
   const handleImageSelect = (imageUrl: string) => {
     if (hasUnsavedChanges) {
@@ -62,8 +78,19 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
       onClose={onClose}
       title="Select Template"
     >
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search templates..."
+          placeholderTextColor={COLORS.mutedForeground}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      </View>
       <FlatList
-        data={MEME_TEMPLATES}
+        data={filteredTemplates}
         numColumns={2}
         keyExtractor={(_, index) => index.toString()}
         contentContainerStyle={styles.container}
