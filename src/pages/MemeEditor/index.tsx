@@ -4,8 +4,8 @@ import { View, ImageBackground, PixelRatio, ImageURISource, TextStyle, Image } f
 import { GestureHandlerRootView, GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import ViewShot, { captureRef } from 'react-native-view-shot';
-import { CameraRoll, PhotoIdentifier } from '@react-native-camera-roll/camera-roll';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import {
   DraggableElement,
   ElementStyleBottomSheet,
@@ -16,7 +16,6 @@ import { Button } from '@/components';
 import styles from '@/styles';
 import { CanvasElement } from '@/types';
 import { SCREEN_WIDTH, SIZING } from '@/constants';
-import { ensureCameraRollPermission } from '@/utils';
 import { useConfirmation } from '@/contexts';
 import { DEFAULT_IMAGE_ELEMENT, DEFAULT_TEXT_ELEMENT, EDITOR_CONFIG } from './constants';
 import { useImageHeight } from '@/hooks';
@@ -32,7 +31,6 @@ const MemeEditorPage = () => {
   const [showStyleElement, setShowStyleElement] = useState(false);
   const [showImageSelection, setShowImageSelection] = useState(false);
   const [showPhotoPicker, setShowPhotoPicker] = useState(false);
-  const [availablePhotos, setAvailablePhotos] = useState<PhotoIdentifier[]>([]);
   const [backgroundImage, setBackgroundImage] = useState<ImageURISource>();
 
   const viewShotRef = useRef(null);
@@ -108,27 +106,9 @@ const MemeEditorPage = () => {
     });
   };
 
-  const addImage = async () => {
+  const addImage = () => {
     clearSelection();
-    try {
-      // Check and request permissions for Android
-      const hasPermission = await ensureCameraRollPermission();
-      if (!hasPermission) {
-        console.log('Permission denied to access photo library');
-        return;
-      }
-
-      // Get photos from camera roll
-      const result = await CameraRoll.getPhotos({
-        assetType: 'Photos',
-        first: EDITOR_CONFIG.CAMERA_ROLL_LIMIT,
-      });
-
-      setAvailablePhotos(result.edges);
-      setShowPhotoPicker(true);
-    } catch (error) {
-      console.error('Error accessing photo library:', error);
-    }
+    setShowPhotoPicker(true);
   };
 
   // Function to handle background image selection
@@ -372,7 +352,6 @@ const MemeEditorPage = () => {
       <PhotoPickerBottomSheet
         visible={showPhotoPicker}
         onClose={() => setShowPhotoPicker(false)}
-        photos={availablePhotos}
         onPhotoSelect={handlePhotoSelect}
       />
     </GestureHandlerRootView>

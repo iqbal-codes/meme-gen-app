@@ -1,7 +1,8 @@
 import React, { useRef, useCallback } from 'react';
-import { Image, Text, TextInput, View, TextStyle, GestureResponderEvent } from 'react-native';
+import { Image, Text, View, TextStyle, GestureResponderEvent } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
+import { EditableTextInput } from '@/components';
 import { CanvasElement, FontFamily, FontStyle, FontWeight } from '@/types';
 import styles from './styles';
 import { useElementDimensions } from '@/hooks';
@@ -93,12 +94,10 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
       const textStyle = getFontStyle() as TextStyle;
       if (isEditing) {
         return (
-          <TextInput
-            style={[styles.text, styles.bordered, textStyle]}
+          <EditableTextInput
+            textStyle={[styles.text, textStyle]}
             value={element.text}
             onChangeText={onUpdateText}
-            multiline
-            autoFocus
             onBlur={() => onEdit()}
             onLayout={onLayout}
           />
@@ -130,7 +129,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
       );
     }
     return null;
-  }, [element, isEditing, isSelecting, onLayout, getFontStyle, onEdit, onUpdateText]);
+  }, [element, isEditing, isSelecting, getFontStyle, onUpdateText, onEdit, onLayout]);
 
   return (
     <GestureDetector gesture={combinedGesture}>
