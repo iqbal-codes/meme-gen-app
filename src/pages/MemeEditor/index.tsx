@@ -1,6 +1,15 @@
 // App.js
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { View, ImageBackground, PixelRatio, ImageURISource, TextStyle, Image } from 'react-native';
+import {
+  View,
+  ImageBackground,
+  PixelRatio,
+  ImageURISource,
+  TextStyle,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { GestureHandlerRootView, GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
 import ViewShot, { captureRef } from 'react-native-view-shot';
@@ -212,121 +221,133 @@ const MemeEditorPage = () => {
 
   return (
     <GestureHandlerRootView style={styles.rootContainer}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.controls}>
-          <View style={styles.controlsContainer}>
-            <Button
-              rounded="full"
-              variant="secondary"
-              title="Template"
-              onPress={() => setShowImageSelection(true)}
-            />
-            <Button
-              rounded="full"
-              variant="secondary"
-              title="Clear All"
-              disabled={!hasUnsavedChanges}
-              onPress={clearCanvas}
-            />
-          </View>
-          <Button
-            variant="primary"
-            title="Save"
-            rounded="full"
-            rightIcon="save"
-            disabled={!hasUnsavedChanges}
-            onPress={onSave}
-          />
-        </View>
-        <View style={styles.container}>
-          <GestureDetector gesture={combinedGesture}>
-            <View style={styles.canvasContainer}>
-              <Animated.View style={[animatedCanvasStyle]}>
-                {/* The View we will capture */}
-                <ViewShot
-                  ref={viewShotRef}
-                  options={{ format: 'jpg', quality: EDITOR_CONFIG.IMAGE_QUALITY.EXPORT }}
-                  style={styles.canvas}
-                >
-                  <ImageBackground
-                    source={backgroundImage}
-                    style={[
-                      {
-                        height: backgroundImage ? imageHeight : SCREEN_WIDTH - SIZING[6],
-                      },
-                      styles.canvasImage,
-                    ]}
-                    resizeMode="cover"
-                  >
-                    {/* Enhanced guide lines for alignment */}
-                    {showGuideLines && (
-                      <>
-                        {/* Main center lines */}
-                        <View style={styles.verticalLine} />
-                        <View style={styles.horizontalLine} />
-                      </>
-                    )}
-                    {Object.values(elements).map(el => (
-                      <DraggableElement
-                        key={el.id}
-                        element={el}
-                        onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
-                        onDragStart={() => onDragStart(el.id)}
-                        onUpdateText={newText => onUpdateText(el.id, newText)}
-                        onEdit={() => setEditingId(el.id)}
-                        onSelect={() => setSelectedId(el.id)}
-                        isSelecting={selectedId === el.id}
-                        isEditing={editingId === el.id}
-                        onUpdateElement={updateElement}
-                      />
-                    ))}
-                  </ImageBackground>
-                </ViewShot>
-              </Animated.View>
-            </View>
-          </GestureDetector>
-          {/* Floating Add Element Buttons */}
-          <View style={styles.floatingAddElementContainer}>
-            <Button rounded="full" variant="secondary" icon="type" onPress={addText} size="large" />
-            <Button
-              rounded="full"
-              variant="secondary"
-              size="large"
-              icon="image"
-              onPress={addImage}
-            />
-          </View>
-          {/* Floating Edit Element Buttons */}
-          {selectedId && (
-            <View style={styles.floatingEditElementContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingContainer}
+        enabled={!!editingId}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}>
+        <SafeAreaView style={styles.container}>
+          <View style={styles.controls}>
+            <View style={styles.controlsContainer}>
               <Button
                 rounded="full"
+                variant="secondary"
+                title="Template"
+                onPress={() => setShowImageSelection(true)}
+              />
+              <Button
+                rounded="full"
+                variant="secondary"
+                title="Clear All"
+                disabled={!hasUnsavedChanges}
+                onPress={clearCanvas}
+              />
+            </View>
+            <Button
+              variant="primary"
+              title="Save"
+              rounded="full"
+              rightIcon="save"
+              disabled={!hasUnsavedChanges}
+              onPress={onSave}
+            />
+          </View>
+          <View style={styles.container}>
+            <GestureDetector gesture={combinedGesture}>
+              <View style={styles.canvasContainer}>
+                <Animated.View style={[animatedCanvasStyle]}>
+                  {/* The View we will capture */}
+                  <ViewShot
+                    ref={viewShotRef}
+                    options={{ format: 'jpg', quality: EDITOR_CONFIG.IMAGE_QUALITY.EXPORT }}
+                    style={styles.canvas}
+                  >
+                    <ImageBackground
+                      source={backgroundImage}
+                      style={[
+                        {
+                          height: backgroundImage ? imageHeight : SCREEN_WIDTH - SIZING[6],
+                        },
+                        styles.canvasImage,
+                      ]}
+                      resizeMode="cover"
+                    >
+                      {/* Enhanced guide lines for alignment */}
+                      {showGuideLines && (
+                        <>
+                          {/* Main center lines */}
+                          <View style={styles.verticalLine} />
+                          <View style={styles.horizontalLine} />
+                        </>
+                      )}
+                      {Object.values(elements).map(el => (
+                        <DraggableElement
+                          key={el.id}
+                          element={el}
+                          onDragEnd={newPosition => onDragEnd(el.id, newPosition)}
+                          onDragStart={() => onDragStart(el.id)}
+                          onUpdateText={newText => onUpdateText(el.id, newText)}
+                          onEdit={() => setEditingId(el.id)}
+                          onSelect={() => setSelectedId(el.id)}
+                          isSelecting={selectedId === el.id}
+                          isEditing={editingId === el.id}
+                          onUpdateElement={updateElement}
+                        />
+                      ))}
+                    </ImageBackground>
+                  </ViewShot>
+                </Animated.View>
+              </View>
+            </GestureDetector>
+            {/* Floating Add Element Buttons */}
+            <View style={styles.floatingAddElementContainer}>
+              <Button
+                rounded="full"
+                variant="secondary"
+                icon="type"
+                onPress={addText}
                 size="large"
-                variant="primary"
-                icon="paintbrush"
-                onPress={() => setShowStyleElement(true)}
               />
               <Button
                 rounded="full"
                 variant="secondary"
                 size="large"
-                icon="copy"
-                onPress={() => onCopyElement(selectedId)}
-              />
-              <Button
-                rounded="full"
-                size="large"
-                variant="danger"
-                icon="trash-2"
-                onPress={() => {
-                  onDeleteElement(selectedId);
-                }}
+                icon="image"
+                onPress={addImage}
               />
             </View>
-          )}
-        </View>
-        {/* Control Buttons */}
-      </SafeAreaView>
+            {/* Floating Edit Element Buttons */}
+            {selectedId && (
+              <View style={styles.floatingEditElementContainer}>
+                <Button
+                  rounded="full"
+                  size="large"
+                  variant="primary"
+                  icon="paintbrush"
+                  onPress={() => setShowStyleElement(true)}
+                />
+                <Button
+                  rounded="full"
+                  variant="secondary"
+                  size="large"
+                  icon="copy"
+                  onPress={() => onCopyElement(selectedId)}
+                />
+                <Button
+                  rounded="full"
+                  size="large"
+                  variant="danger"
+                  icon="trash-2"
+                  onPress={() => {
+                    onDeleteElement(selectedId);
+                  }}
+                />
+              </View>
+            )}
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
+      {/* Control Buttons */}
 
       {/* Text Style Bottom Sheet */}
       <ElementStyleBottomSheet

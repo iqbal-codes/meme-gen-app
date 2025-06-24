@@ -7,6 +7,10 @@ export default StyleSheet.create({
     height: '100%',
     backgroundColor: '#808080',
   },
+  keyboardAvoidingContainer: {
+    height: '100%',
+    flex: 1,
+  },
   container: {
     flex: 1,
   },
