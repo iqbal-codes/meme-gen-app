@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-native';
-import useElementDimensions from './useElementDimensions';
+import useElementDimensions, { __dimensionCache } from './useElementDimensions';
 import { CanvasElement } from '@/types';
 import * as utils from '@/utils';
 
@@ -26,6 +26,7 @@ describe('useElementDimensions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    __dimensionCache.clear(); // Clear the dimension cache between tests
     mockUtils.getDefaultDimensions.mockReturnValue(mockDefaultDimensions);
     mockUtils.normalizeDimensions.mockReturnValue(mockNormalizedDimensions);
     mockUtils.isValidDimensions.mockReturnValue(true);

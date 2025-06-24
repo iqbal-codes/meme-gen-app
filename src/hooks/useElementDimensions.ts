@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/naming-convention */
 import { useState, useCallback } from 'react';
 import { CanvasElement, ElementDimensions, MeasuredDimensions } from '@/types';
 import { getDefaultDimensions, normalizeDimensions, isValidDimensions } from '@/utils';
@@ -18,6 +20,9 @@ interface UseElementDimensionsReturn {
 // Cache for measured dimensions
 const dimensionCache = new Map<string, MeasuredDimensions>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+// Export cache for testing
+export const __dimensionCache = dimensionCache;
 
 const useElementDimensions = ({
   element,

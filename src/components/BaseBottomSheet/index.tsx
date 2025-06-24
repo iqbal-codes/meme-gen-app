@@ -27,13 +27,13 @@ const BaseBottomSheet: React.FC<BaseBottomSheetProps> = ({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} testID="base-bottom-sheet-modal">
       <View style={styles.container}>
-        <Pressable style={styles.overlay} onPress={onClose} />
+        <Pressable style={styles.overlay} onPress={onClose} testID="bottom-sheet-overlay" />
         <View style={bottomSheetStyle}>
           <View style={styles.header}>
             <Text style={styles.title}>{title}</Text>
-            <Button variant="ghost" icon="x" onPress={onClose} />
+            <Button variant="ghost" icon="x" onPress={onClose} testID="close-button" />
           </View>
           {children}
         </View>

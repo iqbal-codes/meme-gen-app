@@ -195,10 +195,8 @@ describe('ConfirmationContext', () => {
       });
 
       // Simulate backdrop press which calls onClose
-      const backdrop = getByText('Test Confirmation').parent?.parent?.parent;
-      if (backdrop) {
-        fireEvent.press(backdrop);
-      }
+      const backdrop = getByTestId('confirmation-modal-backdrop');
+      fireEvent.press(backdrop);
 
       await waitFor(() => {
         expect(queryByText('Test Confirmation')).toBeNull();

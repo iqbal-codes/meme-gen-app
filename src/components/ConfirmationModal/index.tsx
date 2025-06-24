@@ -60,11 +60,12 @@ export const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         style={styles.overlay}
         activeOpacity={1}
         onPress={handleBackdropPress}
+        testID="confirmation-modal-backdrop"
       >
         <TouchableOpacity
           style={styles.container}
           activeOpacity={1}
-          onPress={(e) => e.stopPropagation()}
+          onPress={() => {}}
         >
           <View style={styles.content}>
             <Text style={styles.title}>{title}</Text>

@@ -91,11 +91,11 @@ describe('BaseBottomSheet Component', () => {
   });
 
   it('handles modal request close', () => {
-    const { getByText } = render(<BaseBottomSheet {...defaultProps} />);
+    const { getByTestId } = render(<BaseBottomSheet {...defaultProps} />);
 
     // Simulate Android back button press
-    const modal = getByText('Test Bottom Sheet').parent?.parent?.parent?.parent;
-    if (modal && modal.props.onRequestClose) {
+    const modal = getByTestId('base-bottom-sheet-modal');
+    if (modal.props.onRequestClose) {
       modal.props.onRequestClose();
       expect(mockOnClose).toHaveBeenCalledTimes(1);
     }
@@ -109,16 +109,16 @@ describe('BaseBottomSheet Component', () => {
   });
 
   it('applies correct animation type', () => {
-    const { getByText } = render(<BaseBottomSheet {...defaultProps} />);
+    const { getByTestId } = render(<BaseBottomSheet {...defaultProps} />);
 
-    const modal = getByText('Test Bottom Sheet').parent?.parent?.parent?.parent;
-    expect(modal?.props.animationType).toBe('slide');
+    const modal = getByTestId('base-bottom-sheet-modal');
+    expect(modal.props.animationType).toBe('slide');
   });
 
   it('is transparent modal', () => {
-    const { getByText } = render(<BaseBottomSheet {...defaultProps} />);
+    const { getByTestId } = render(<BaseBottomSheet {...defaultProps} />);
 
-    const modal = getByText('Test Bottom Sheet').parent?.parent?.parent?.parent;
-    expect(modal?.props.transparent).toBe(true);
+    const modal = getByTestId('base-bottom-sheet-modal');
+    expect(modal.props.transparent).toBe(true);
   });
 });
