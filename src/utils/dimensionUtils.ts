@@ -1,26 +1,18 @@
+import { EDITOR_CONFIG } from '@/pages/MemeEditor/constants';
 import { CanvasElement, ElementDimensions } from '@/types';
 
 // Default dimensions for different element types
 const DEFAULT_DIMENSIONS = {
-  text: { width: 100, height: 36 },
-  image: { width: 200, height: 200 },
+  text: { width: EDITOR_CONFIG.DEFAULT_TEXT_WIDTH, height: EDITOR_CONFIG.DEFAULT_TEXT_HEIGHT },
+  image: { width: EDITOR_CONFIG.DEFAULT_IMAGE_WIDTH, height: EDITOR_CONFIG.DEFAULT_IMAGE_HEIGHT },
 } as const;
 
 /**
  * Get default dimensions based on element type
  */
-export const getDefaultDimensions = (element: CanvasElement): ElementDimensions => DEFAULT_DIMENSIONS[element.type] || DEFAULT_DIMENSIONS.text;
+export const getDefaultDimensions = (element: CanvasElement): ElementDimensions =>
+  DEFAULT_DIMENSIONS[element.type] || DEFAULT_DIMENSIONS.text;
 
-/**
- * Calculate scaled dimensions
- */
-export const getScaledDimensions = (
-  dimensions: ElementDimensions,
-  scale: number,
-): ElementDimensions => ({
-  width: dimensions.width * scale,
-  height: dimensions.height * scale,
-});
 
 /**
  * Validate and normalize dimensions
@@ -36,4 +28,5 @@ export const normalizeDimensions = (
 /**
  * Check if dimensions are valid
  */
-export const isValidDimensions = (dimensions?: Partial<ElementDimensions>): boolean => !!(dimensions?.width && dimensions.width > 0 && dimensions?.height && dimensions.height > 0);
+export const isValidDimensions = (dimensions?: Partial<ElementDimensions>): boolean =>
+  !!(dimensions?.width && dimensions.width > 0 && dimensions?.height && dimensions.height > 0);

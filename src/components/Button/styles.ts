@@ -104,7 +104,6 @@ export default StyleSheet.create({
   text: {
     fontSize: FONT.sizes.base,
     fontWeight: FONT.weights.medium,
-    letterSpacing: 0.5,
     textAlign: 'center',
   },
   primaryText: {

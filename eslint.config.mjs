@@ -4,10 +4,10 @@ import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 import globals from 'globals';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
+  baseDirectory: dirname,
   recommendedConfig: js.configs.recommended,
   allConfig: js.configs.all,
 });
@@ -19,6 +19,7 @@ export default [
     'airbnb/hooks',
     'plugin:@typescript-eslint/recommended',
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
+    'prettier',
   ),
   {
     languageOptions: {
@@ -34,6 +35,21 @@ export default [
       },
     },
 
-    rules: {},
+    rules: {
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+      'import/extensions': 'off',
+      'no-console': 'off',
+      'react/function-component-definition': [
+        2,
+        {
+          namedComponents: 'arrow-function',
+          unnamedComponents: 'arrow-function',
+        },
+      ],
+      '@typescript-eslint/no-misused-promises': 'off',
+      'react/require-default-props': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off'
+    },
   },
 ];

@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Image, ImageURISource } from 'react-native';
 import { SCREEN_WIDTH, SIZING } from '@/constants';
+import { useConfirmation } from '@/contexts';
 
 const useImageHeight = (imageSource?: number | ImageURISource) => {
+  const { showConfirmation } = useConfirmation();
   const [imageHeight, setImageHeight] = useState<number>(0);
 
   useEffect(() => {
@@ -18,7 +20,6 @@ const useImageHeight = (imageSource?: number | ImageURISource) => {
         setImageHeight(calculatedHeight);
       }
     } else if (typeof imageSource === 'object' && imageSource.uri) {
-      // For remote images (e.g., { uri: 'http://example.com/image.jpg' })
       Image.getSize(
         imageSource.uri,
         (width, height) => {
@@ -26,13 +27,18 @@ const useImageHeight = (imageSource?: number | ImageURISource) => {
           const calculatedHeight = (SCREEN_WIDTH - SIZING.md * 2) / aspectRatio;
           setImageHeight(calculatedHeight);
         },
-        (error) => {
+        (error: { message: string }) => {
           console.error(`Couldn't get image size: ${error.message}`);
           // Fallback or error handling
+          showConfirmation({
+            title: 'Get Image Size Error',
+            message: `Couldn't get image size: ${error.message}`,
+            showCancel: false,
+          });
         },
       );
     }
-  }, [imageSource]); // Recalculate if the image source changes
+  }, [imageSource, showConfirmation]); // Recalculate if the image source changes
 
   return imageHeight;
 };

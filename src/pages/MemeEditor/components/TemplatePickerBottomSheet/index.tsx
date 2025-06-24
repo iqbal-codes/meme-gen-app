@@ -4,7 +4,7 @@ import {
 } from 'react-native';
 import { BaseBottomSheet } from '@/components';
 import styles from './styles';
-import { MEME_TEMPLATES } from '@/constants';
+import { MEME_TEMPLATES } from '../../constants';
 import { MemeTemplate } from '@/types';
 import { useConfirmation } from '@/contexts';
 
@@ -61,8 +61,6 @@ const ImageSelectionBottomSheet: React.FC<ImageSelectionBottomSheetProps> = ({
       visible={visible}
       onClose={onClose}
       title="Select Template"
-      maxHeight="70%"
-      minHeight="50%"
     >
       <FlatList
         data={MEME_TEMPLATES}

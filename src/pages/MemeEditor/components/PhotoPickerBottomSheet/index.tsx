@@ -35,7 +35,7 @@ const PhotoPickerBottomSheet: React.FC<PhotoPickerBottomSheetProps> = ({
   );
 
   return (
-    <BaseBottomSheet visible={visible} onClose={onClose} title="Select Image">
+    <BaseBottomSheet visible={visible} onClose={onClose} title="Select Image" >
       <FlatList
         data={photos}
         renderItem={renderPhotoItem}

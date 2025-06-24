@@ -1,23 +1,12 @@
-import React, {
-  useRef, useCallback, useState, useLayoutEffect,
-} from 'react';
-import {
-  Image,
-  Text,
-  TextInput,
-  View,
-  TextStyle,
-  GestureResponderEvent,
-} from 'react-native';
+import React, { useRef, useCallback } from 'react';
+import { Image, Text, TextInput, View, TextStyle, GestureResponderEvent } from 'react-native';
 import { GestureDetector } from 'react-native-gesture-handler';
 import Animated from 'react-native-reanimated';
-import {
-  CanvasElement, FontFamily, FontStyle, FontWeight,
-} from '@/types';
-import useElementGestures from './hooks/useElementGestures';
+import { CanvasElement, FontFamily, FontStyle, FontWeight } from '@/types';
 import styles from './styles';
 import { useElementDimensions } from '@/hooks';
-import { getFont } from '@/utils/fontUtils';
+import { useElementGestures } from '../../hooks';
+import { getFont } from '@/utils';
 
 interface DraggableElementProps {
   element: CanvasElement;
@@ -76,12 +65,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
   // Create font style from fontUtils
   const getFontStyle = useCallback(() => {
     if (element.type === 'text' && element.style) {
-      const {
-        fontFamily,
-        fontWeight,
-        fontStyle: fontStyleProp,
-        ...otherStyles
-      } = element.style;
+      const { fontFamily, fontWeight, fontStyle: fontStyleProp, ...otherStyles } = element.style;
 
       // Use fontUtils if font properties are specified
       if (fontFamily || fontWeight || fontStyleProp) {
@@ -122,18 +106,12 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
       }
 
       return (
-        <Text
-          style={[
-            styles.text,
-            isSelecting && styles.bordered,
-            textStyle,
-          ]}
-          onLayout={onLayout}
-        >
+        <Text style={[styles.text, isSelecting && styles.bordered, textStyle]} onLayout={onLayout}>
           {element.text}
         </Text>
       );
-    } if (element.type === 'image') {
+    }
+    if (element.type === 'image') {
       return (
         <View style={[styles.imageContainer, isSelecting && styles.bordered]}>
           <Image
@@ -152,7 +130,7 @@ const DraggableElement: React.FC<DraggableElementProps> = ({
       );
     }
     return null;
-  }, [element, isEditing, isSelecting, onLayout, getFontStyle]);
+  }, [element, isEditing, isSelecting, onLayout, getFontStyle, onEdit, onUpdateText]);
 
   return (
     <GestureDetector gesture={combinedGesture}>

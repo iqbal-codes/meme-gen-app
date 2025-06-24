@@ -1,11 +1,8 @@
 import { useCallback } from 'react';
 import { Gesture } from 'react-native-gesture-handler';
-import {
-  useSharedValue,
-  useAnimatedStyle,
-  runOnJS,
-} from 'react-native-reanimated';
+import { useSharedValue, useAnimatedStyle, runOnJS } from 'react-native-reanimated';
 import { CanvasElement } from '@/types';
+import { EDITOR_CONFIG } from '@/pages/MemeEditor/constants';
 
 interface UseElementGesturesProps {
   element: CanvasElement;
@@ -19,15 +16,6 @@ interface UseElementGesturesProps {
   onTransform?: (transform: { scale: number; rotation: number }) => void;
   onUpdateElement?: (element: CanvasElement) => void;
 }
-
-// Constants
-const SNAP_THRESHOLD = 5;
-const ROTATION_THRESHOLD = 5;
-const MIN_SCALE = 0.5;
-const MAX_SCALE = 3.0;
-const DEFAULT_ELEMENT_WIDTH = 100;
-const DEFAULT_ELEMENT_HEIGHT = 36;
-const SNAP_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315];
 
 const useElementGestures = ({
   element,
@@ -58,8 +46,8 @@ const useElementGestures = ({
   const applyPositionSnapping = (newX: number, newY: number) => {
     'worklet';
 
-    const elementWidth = (elementDimensions?.width || DEFAULT_ELEMENT_WIDTH) * scale.value;
-    const elementHeight = (elementDimensions?.height || DEFAULT_ELEMENT_HEIGHT) * scale.value;
+    const elementWidth = (elementDimensions?.width || EDITOR_CONFIG.DEFAULT_TEXT_WIDTH) * scale.value;
+    const elementHeight = (elementDimensions?.height || EDITOR_CONFIG.DEFAULT_TEXT_HEIGHT) * scale.value;
 
     // Calculate element edges
     const elementLeft = newX - elementWidth / 2;
@@ -75,20 +63,20 @@ const useElementGestures = ({
     let finalY = newY;
 
     // Horizontal snapping to vertical center line
-    if (Math.abs(elementLeft - centerX) <= SNAP_THRESHOLD) {
+    if (Math.abs(elementLeft - centerX) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalX = centerX + elementWidth / 2;
-    } else if (Math.abs(elementRight - centerX) <= SNAP_THRESHOLD) {
+    } else if (Math.abs(elementRight - centerX) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalX = centerX - elementWidth / 2;
-    } else if (Math.abs(newX - centerX) <= SNAP_THRESHOLD) {
+    } else if (Math.abs(newX - centerX) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalX = centerX;
     }
 
     // Vertical snapping to horizontal center line
-    if (Math.abs(elementTop - centerY) <= SNAP_THRESHOLD) {
+    if (Math.abs(elementTop - centerY) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalY = centerY + elementHeight / 2;
-    } else if (Math.abs(elementBottom - centerY) <= SNAP_THRESHOLD) {
+    } else if (Math.abs(elementBottom - centerY) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalY = centerY - elementHeight / 2;
-    } else if (Math.abs(newY - centerY) <= SNAP_THRESHOLD) {
+    } else if (Math.abs(newY - centerY) <= EDITOR_CONFIG.SNAP_THRESHOLD) {
       finalY = centerY;
     }
 
@@ -103,14 +91,16 @@ const useElementGestures = ({
     const normalizedDegrees = ((degrees % 360) + 360) % 360;
 
     // Find closest snap angle
-    for (const angle of SNAP_ANGLES) {
-      if (Math.abs(normalizedDegrees - angle) <= ROTATION_THRESHOLD) {
-        return (angle * Math.PI) / 180;
-      }
+    const snapAngle = EDITOR_CONFIG.SNAP_ANGLES.find(
+      angle => Math.abs(normalizedDegrees - angle) <= EDITOR_CONFIG.ROTATION_THRESHOLD,
+    );
+
+    if (snapAngle !== undefined) {
+      return (snapAngle * Math.PI) / 180;
     }
 
     // Check for 360° wrap-around
-    if (normalizedDegrees > 360 - ROTATION_THRESHOLD) {
+    if (normalizedDegrees > 360 - EDITOR_CONFIG.ROTATION_THRESHOLD) {
       return 0;
     }
 
@@ -121,7 +111,7 @@ const useElementGestures = ({
   const applyScaleConstraints = (newScale: number) => {
     'worklet';
 
-    return Math.max(MIN_SCALE, Math.min(MAX_SCALE, newScale));
+    return Math.max(EDITOR_CONFIG.MIN_SCALE, Math.min(EDITOR_CONFIG.MAX_SCALE, newScale));
   };
 
   // Update element with transform changes
@@ -162,7 +152,7 @@ const useElementGestures = ({
       offsetY.value = translateY.value;
       runOnJS(onDragStart)();
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       'worklet';
 
       const newX = event.translationX + offsetX.value;
@@ -192,7 +182,7 @@ const useElementGestures = ({
 
       savedRotation.value = rotation.value;
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       'worklet';
 
       const newRotation = savedRotation.value + event.rotation;
@@ -208,7 +198,7 @@ const useElementGestures = ({
 
       savedScale.value = scale.value;
     })
-    .onUpdate((event) => {
+    .onUpdate(event => {
       'worklet';
 
       const newScale = savedScale.value * event.scale;

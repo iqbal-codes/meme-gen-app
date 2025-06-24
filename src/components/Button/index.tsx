@@ -11,14 +11,12 @@ import {
 } from 'react-native';
 import Icon from '@react-native-vector-icons/lucide';
 import styles from './styles';
-import { COLORS, RADIUS, FONT } from '@/constants/theme';
-import {
-  ButtonVariant, ButtonSize, ButtonRounded, AllIconProps,
-} from '@/types';
+import { COLORS, RADIUS, FONT } from '@/constants';
+import { ButtonVariant, ButtonSize, ButtonRounded, AllIconProps } from '@/types';
 
 export interface ButtonProps {
-  onPress?: (e: GestureResponderEvent) => void;
-  title?: string;
+  onPress: (e: GestureResponderEvent) => void;
+  title?: string | undefined;
   variant?: ButtonVariant;
   size?: ButtonSize;
   block?: boolean;
@@ -59,9 +57,7 @@ const Button: React.FC<ButtonProps> = ({
   const getButtonStyle = () => {
     const buttonStyles: StyleProp<ViewStyle> = [
       styles.button,
-      enableShadow
-        ? styles[`${variant}Button`]
-        : styles[`${variant}ButtonNoShadow`],
+      enableShadow ? styles[`${variant}Button`] : styles[`${variant}ButtonNoShadow`],
       isIconOnly ? styles[`${size}IconButton`] : styles[`${size}Button`],
       { borderRadius: RADIUS[rounded] }, // Apply rounded prop
     ];
@@ -133,11 +129,7 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const renderIcon = (iconName: AllIconProps) => (
-    <Icon
-      name={iconName}
-      size={getIconSize()}
-      color={getIconColor()}
-    />
+    <Icon name={iconName} size={getIconSize()} color={getIconColor()} />
   );
 
   const renderContent = () => {
@@ -145,21 +137,13 @@ const Button: React.FC<ButtonProps> = ({
       return (
         <ActivityIndicator
           size="small"
-          color={
-            variant === 'outline' || variant === 'ghost'
-              ? COLORS.primary
-              : COLORS.card
-          }
+          color={variant === 'outline' || variant === 'ghost' ? COLORS.primary : COLORS.card}
         />
       );
     }
 
     if (isIconOnly) {
-      return (
-        <View style={styles.iconOnlyContainer}>
-          {icon && renderIcon(icon)}
-        </View>
-      );
+      return <View style={styles.iconOnlyContainer}>{icon && renderIcon(icon)}</View>;
     }
 
     return (

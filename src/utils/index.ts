@@ -1,4 +1,4 @@
 export * from './dimensionUtils';
-export * from './fontUtils';
+export { default as getFont } from './fontUtils';
 export * from './permissionUtils';
 export * from './styleUtils';

@@ -128,28 +128,23 @@ const FONT_CONFIG = {
 /**
  * Get font style object for the specified family, weight, and style
  */
-export const getFont = (
+const getFont = (
   family: FontFamily,
   weight: FontWeight = 'regular',
   style: FontStyle = 'normal',
 ): Pick<TextStyle, 'fontFamily' | 'fontWeight' | 'fontStyle'> => {
   const staticFont = FONT_CONFIG.static[family];
   if (!staticFont) {
-    console.warn(
-      `Font family '${family}' not found, falling back to Montserrat-Regular`,
-    );
+    console.warn(`Font family '${family}' not found, falling back to Montserrat-Regular`);
     return { fontFamily: 'Montserrat-Regular' };
   }
 
   const weightConfig = staticFont[weight];
   if (!weightConfig) {
-    console.warn(
-      `Font weight '${weight}' not available for '${family}', falling back to regular`,
-    );
+    console.warn(`Font weight '${weight}' not available for '${family}', falling back to regular`);
     const regularConfig = staticFont.regular;
     return {
-      fontFamily:
-        regularConfig?.[style] || regularConfig?.normal || 'Montserrat-Regular',
+      fontFamily: regularConfig?.[style] || regularConfig?.normal || 'Montserrat-Regular',
     };
   }
 
@@ -163,3 +158,5 @@ export const getFont = (
 
   return { fontFamily };
 };
+
+export default getFont;

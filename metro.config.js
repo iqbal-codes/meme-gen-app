@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable import/no-unresolved */
 const { getDefaultConfig, mergeConfig } = require('@react-native/metro-config');
-const {
-  wrapWithReanimatedMetroConfig,
-} = require('react-native-reanimated/metro-config');
+const { wrapWithReanimatedMetroConfig } = require('react-native-reanimated/metro-config');
 const path = require('path');
 
 /**
@@ -18,7 +19,4 @@ const config = {
   },
 };
 
-module.exports = mergeConfig(
-  getDefaultConfig(__dirname),
-  wrapWithReanimatedMetroConfig(config),
-);
+module.exports = wrapWithReanimatedMetroConfig(mergeConfig(getDefaultConfig(__dirname), config));

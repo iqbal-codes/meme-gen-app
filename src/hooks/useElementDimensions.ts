@@ -1,10 +1,6 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback } from 'react';
 import { CanvasElement, ElementDimensions, MeasuredDimensions } from '@/types';
-import {
-  getDefaultDimensions,
-  normalizeDimensions,
-  isValidDimensions,
-} from '@/utils';
+import { getDefaultDimensions, normalizeDimensions, isValidDimensions } from '@/utils';
 
 interface UseElementDimensionsProps {
   element: CanvasElement;
@@ -23,13 +19,12 @@ interface UseElementDimensionsReturn {
 const dimensionCache = new Map<string, MeasuredDimensions>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
-export const useElementDimensions = ({
+const useElementDimensions = ({
   element,
   autoMeasure = true,
 }: UseElementDimensionsProps): UseElementDimensionsReturn => {
   const [measuredDimensions, setMeasuredDimensions] = useState<MeasuredDimensions | undefined>();
   const [isLoading, setIsLoading] = useState(false);
-  const measurementRef = useRef<NodeJS.Timeout>(null);
 
   // Get cached dimensions
   const getCachedDimensions = useCallback((elementId: string): MeasuredDimensions | undefined => {
@@ -111,3 +106,5 @@ export const useElementDimensions = ({
     hasMeasured,
   };
 };
+
+export default useElementDimensions;

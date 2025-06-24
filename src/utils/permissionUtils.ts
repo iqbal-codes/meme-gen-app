@@ -15,19 +15,13 @@ export const checkCameraRollPermission = async (): Promise<boolean> => {
     if (Number(Platform.Version) >= 33) {
       // Android 13+ uses granular media permissions
       const [hasReadMediaImages, hasReadMediaVideo] = await Promise.all([
-        PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-        ),
-        PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
-        ),
+        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES),
+        PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO),
       ]);
       return hasReadMediaImages && hasReadMediaVideo;
     }
     // Android 12 and below use READ_EXTERNAL_STORAGE
-    return await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-    );
+    return await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
   } catch (error) {
     console.error('Error checking camera roll permission:', error);
     return false;
@@ -54,10 +48,12 @@ export const requestCameraRollPermission = async (): Promise<PermissionResult> =
         PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO,
       ]);
 
-      const imagesGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES]
-          === PermissionsAndroid.RESULTS.GRANTED;
-      const videoGranted = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO]
-          === PermissionsAndroid.RESULTS.GRANTED;
+      const imagesGranted =
+        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+        PermissionsAndroid.RESULTS.GRANTED;
+      const videoGranted =
+        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+        PermissionsAndroid.RESULTS.GRANTED;
 
       if (imagesGranted && videoGranted) {
         return {
@@ -66,10 +62,12 @@ export const requestCameraRollPermission = async (): Promise<PermissionResult> =
         };
       }
 
-      const imagesDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES]
-          === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
-      const videoDenied = statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO]
-          === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
+      const imagesDenied =
+        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES] ===
+        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
+      const videoDenied =
+        statuses[PermissionsAndroid.PERMISSIONS.READ_MEDIA_VIDEO] ===
+        PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN;
 
       return {
         status: PermissionStatus.DENIED,
@@ -131,9 +129,7 @@ export const checkCameraPermission = async (): Promise<boolean> => {
   }
 
   try {
-    return await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
+    return await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.CAMERA);
   } catch (error) {
     console.error('Error checking camera permission:', error);
     return false;
@@ -152,9 +148,7 @@ export const requestCameraPermission = async (): Promise<PermissionResult> => {
   }
 
   try {
-    const status = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-    );
+    const status = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA);
 
     if (status === PermissionsAndroid.RESULTS.GRANTED) {
       return {
@@ -179,16 +173,13 @@ export const requestCameraPermission = async (): Promise<PermissionResult> => {
 /**
  * Generic permission checker for any permission type
  */
-export const checkPermission = async (
-  permissionType: PermissionType,
-): Promise<boolean> => {
+export const checkPermission = async (permissionType: PermissionType): Promise<boolean> => {
   switch (permissionType) {
     case PermissionType.CAMERA_ROLL:
       return checkCameraRollPermission();
     case PermissionType.CAMERA:
       return checkCameraPermission();
     default:
-      console.warn(`Permission type ${permissionType} not implemented`);
       return false;
   }
 };
@@ -205,7 +196,6 @@ export const requestPermission = async (
     case PermissionType.CAMERA:
       return requestCameraPermission();
     default:
-      console.warn(`Permission type ${permissionType} not implemented`);
       return {
         status: PermissionStatus.UNAVAILABLE,
         canAskAgain: false,
@@ -217,9 +207,7 @@ export const requestPermission = async (
  * Show permission rationale to user
  * You can customize these messages based on your app's needs
  */
-export const getPermissionRationale = (
-  permissionType: PermissionType,
-): string => {
+export const getPermissionRationale = (permissionType: PermissionType): string => {
   switch (permissionType) {
     case PermissionType.CAMERA_ROLL:
       return 'This app needs access to your photo library to let you select images for your memes.';
