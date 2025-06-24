@@ -124,7 +124,6 @@ describe('EditableTextInput Component', () => {
           borderWidth: 1,
           borderStyle: 'dashed',
           borderColor: COLORS.primary,
-          backgroundColor: COLORS.background,
         }),
         customStyle,
       ])
@@ -157,7 +156,6 @@ describe('EditableTextInput Component', () => {
           borderWidth: 1,
           borderStyle: 'dashed',
           borderColor: COLORS.primary,
-          backgroundColor: COLORS.background,
         }),
         customStyles,
       ])

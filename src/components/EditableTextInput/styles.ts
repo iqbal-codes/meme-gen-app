@@ -10,6 +10,5 @@ export default StyleSheet.create({
     borderWidth: 1,
     borderStyle: 'dashed',
     borderColor: COLORS.primary,
-    backgroundColor: COLORS.background,
   },
 });
